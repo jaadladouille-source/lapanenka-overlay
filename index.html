@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=1080">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wdth,wght@62..125,100..900&family=Barlow:wght@500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
 /* =====================================================================
    LA PANENKA — OVERLAY LIVE VERTICAL 1080 x 1920 (OBS)
@@ -52,6 +52,8 @@ body.preview{background:#05070d}
 .pill.yellow{background:var(--acc);color:var(--accTxt)}
 .pill.red{background:var(--red);color:var(--redTxt)}
 .pill.green{background:var(--green);color:#06140f}
+.pill.ycard{background:#ffd400;color:#161616}
+.pill.rcard{background:#e5243b;color:#ffffff}
 .pill .dot{width:9px;height:9px;border-radius:50%;background:currentColor;animation:blink 1.4s infinite}
 .in{animation:up .45s var(--ease) backwards}
 
@@ -65,13 +67,14 @@ body.preview{background:#05070d}
 .comp{display:flex;justify-content:space-between;align-items:center;height:40px;gap:12px}
 .comp-l{display:flex;align-items:center;gap:12px;min-width:0;font:600 19px/1 var(--ui);white-space:nowrap}
 .lg{width:34px;height:34px;border-radius:50%;background:#fff;display:grid;place-items:center;padding:4px;flex:none}
-.lg img{max-width:100%;max-height:100%;object-fit:contain}
+.lg img{width:100%;height:100%;min-width:0;min-height:0;object-fit:contain}
 #leagueName{font:700 22px/1 var(--cond);text-transform:uppercase;letter-spacing:.6px}
 #round{color:var(--muted);overflow:hidden;text-overflow:ellipsis}
 .teams{display:grid;grid-template-columns:1fr 330px 1fr;align-items:center;height:176px}
 .team{display:flex;flex-direction:column;align-items:center;gap:12px;min-width:0}
 .crest{width:96px;height:96px;display:grid;place-items:center}
-.crest img{max-width:100%;max-height:100%;object-fit:contain}
+/* Logo toujours contenu dans sa boîte, quel que soit son format (ex. logo de Reims, très haut) */
+.crest img{width:100%;height:100%;min-width:0;min-height:0;object-fit:contain}
 .tname{font:800 34px/1 var(--cond);letter-spacing:.4px;text-transform:uppercase;text-align:center;white-space:nowrap;max-width:310px;overflow:hidden;text-overflow:ellipsis;position:relative;padding-bottom:9px}
 .tname::after{content:"";position:absolute;left:30%;right:30%;bottom:0;height:4px;background:var(--home)}
 .team.away .tname::after{background:var(--away)}
@@ -186,6 +189,7 @@ body.ph .cam-ph{display:flex}
 .rc-t img{width:104px;height:104px;object-fit:contain}
 .rc-t span{font:800 24px/1 var(--cond);text-transform:uppercase;letter-spacing:.4px;text-align:center}
 .rc-s{font:400 130px/1 var(--anton);letter-spacing:2px}
+.rc-s b,.rc-s i{font:inherit}
 .rc-ctx{font:600 17px/1.3 var(--ui);color:var(--cream);text-align:center;max-width:900px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* Annonce des moments clés */
 #banner{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--nav);
@@ -264,21 +268,165 @@ body.preview #status{display:block}
 .trow .tt{font:400 24px var(--anton);color:var(--acc)}
 .trow button{font-size:16px;padding:8px 14px}
 #sMsg{font:600 19px var(--ui);color:var(--acc);margin-top:10px;min-height:24px}
+.sbox .linkrow{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}
+.sbox .linkrow input{font-size:16px;color:var(--cream)}
+.ghost{display:none}
+#bgLayer .dec-lfp{display:none}
+
+/* =====================================================================
+   SKIN LFP — Ligue 1 / Ligue 2 (DA 2024 « Football. À la française »)
+   Base charbon commune, deux couleurs par ligue, typo grotesque compressée,
+   formes penchées et coins coupés façon habillage esport.
+   L1 : bleu électrique #085FFF + rose #FF7FDE
+   L2 : violet #7E4DF7 + aqua #74FBD3
+   ===================================================================== */
+html[data-skin=lfp]{
+  --ch:#262624; --nr:#161616; --bc:#f7f7f6; --gr:#e4e4e3; --gm:#a7a6a1;
+  --cream:#e4e4e3; --muted:#a7a6a1; --line:rgba(255,255,255,.09); --tile:rgba(255,255,255,.06);
+  --anton:"Archivo","Arial Narrow",sans-serif; --cond:"Archivo","Arial Narrow",sans-serif; --ui:"Archivo",system-ui,sans-serif;
+  --cut:30px; --lean:11px;
+}
+/* Typo : Archivo en 3 largeurs (compressée pour les chiffres, condensée pour les noms, normale pour l'info) */
+html[data-skin=lfp] :is(.digits,.vs,#clock,.wm b,.sv,.pl b,.ev .m,.mc .s,.rc-s,#banner .b1,.tsc,.g-word,.g-scorer,.g-score,.sbox h2,.trow .tt,.ghost){font-weight:900;font-stretch:62%}
+html[data-skin=lfp] :is(.pill,#leagueName,.tname,#clock.long,.host b,.tk-txt b,#ltSub .s1,#tabTitle,.pl span,.ev .t,.var-ic,.mc .n,.rc-t span,#banner .b2,#banner .bcr,.tk-item,.g-team,.sbox label,.sbox button){font-stretch:72%;font-weight:800}
+html[data-skin=lfp] :is(.over,#round,.scorers,.host span,.lt-r,.tk-txt small,.sl span,.lu-head small,.ev .t small,.mc .mm,.rc-ctx,#banner .b0,.g-meta,.tk-promo,.tmin){font-stretch:100%;font-weight:600}
+
+/* Pastilles -> étiquettes penchées */
+html[data-skin=lfp] .pill{border-radius:0;clip-path:polygon(var(--lean) 0,100% 0,calc(100% - var(--lean)) 100%,0 100%);padding-left:calc(16px + var(--lean));padding-right:calc(16px + var(--lean))}
+html[data-skin=lfp] .pill.dark{background:var(--nr);box-shadow:none;color:var(--gr)}
+html[data-skin=lfp] .pill.white{background:var(--gr);color:var(--ch)}
+html[data-skin=lfp] .pill .dot{border-radius:0;transform:skewX(-12deg)}
+html[data-skin=lfp] #livePill.red{background:var(--p2);color:var(--p2Txt)}
+
+/* Panneaux : aplat charbon, coins coupés, filet bicolore */
+html[data-skin=lfp] .panel{border-radius:0;background:var(--ch);box-shadow:none;
+  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)))}
+html[data-skin=lfp] .panel::before{height:6px;background:linear-gradient(90deg,var(--p1) 0 74%,var(--p2) 74% 100%)}
+
+/* Tableau de score */
+html[data-skin=lfp] #score{padding-top:22px}
+html[data-skin=lfp] .ghost{display:block;position:absolute;right:-26px;top:-86px;font-size:520px;line-height:1;color:#30302e;transform:skewX(-11deg);pointer-events:none;z-index:0}
+html[data-skin=lfp] #score>:not(.ghost){position:relative;z-index:1}
+html[data-skin=lfp] .lg{border-radius:0;clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%);width:42px;padding:5px 8px}
+html[data-skin=lfp] #leagueName{font-size:24px;letter-spacing:.4px}
+html[data-skin=lfp] .tname{letter-spacing:.2px;padding-bottom:11px}
+html[data-skin=lfp] .tname::after{left:38%;right:38%;height:6px;transform:skewX(-24deg)}
+html[data-skin=lfp] .digits{gap:12px;height:128px}
+html[data-skin=lfp] .digit{min-width:112px;height:128px;display:inline-grid;place-items:center;font-size:124px;line-height:1;padding-top:4px;background:var(--gr);color:var(--ch);
+  clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px))}
+html[data-skin=lfp] .digit.bump{animation:bumpLfp 1.3s var(--ease)}
+@keyframes bumpLfp{0%{transform:scale(1)}20%{transform:scale(1.12);background:var(--p2);color:var(--p2Txt)}100%{transform:scale(1)}}
+html[data-skin=lfp] .sep{font-size:0;width:14px;height:64px;background:var(--p2);transform:skewX(-14deg);top:0}
+html[data-skin=lfp] .vs{font-size:128px;height:128px;color:var(--p2)}
+html[data-skin=lfp] #clock{background:var(--p1);color:var(--p1Txt);font-size:34px;padding:7px 26px}
+html[data-skin=lfp] #clock.long{font-size:22px}
+html[data-skin=lfp] .scorers{font-size:17px}
+
+/* Webcam : cadre HUD (équerres aux 4 coins), plus de bordure arrondie */
+html[data-skin=lfp] .cam-ph{border-radius:0;background:repeating-linear-gradient(-66deg,#1d1d1c 0 22px,#222220 22px 44px)}
+html[data-skin=lfp] .cam-border{inset:-10px;border:0;border-radius:0;--cc:var(--p2);transition:none;
+  background:
+    linear-gradient(var(--cc),var(--cc)) left top/96px 8px no-repeat,
+    linear-gradient(var(--cc),var(--cc)) left top/8px 96px no-repeat,
+    linear-gradient(var(--cc),var(--cc)) right top/96px 8px no-repeat,
+    linear-gradient(var(--cc),var(--cc)) right top/8px 96px no-repeat,
+    linear-gradient(var(--cc),var(--cc)) left bottom/96px 8px no-repeat,
+    linear-gradient(var(--cc),var(--cc)) left bottom/8px 96px no-repeat,
+    linear-gradient(var(--cc),var(--cc)) right bottom/96px 8px no-repeat,
+    linear-gradient(var(--cc),var(--cc)) right bottom/8px 96px no-repeat}
+html[data-skin=lfp] .cam-border::after{content:"";position:absolute;inset:10px;box-shadow:0 0 0 2px rgba(255,255,255,.14)}
+html[data-skin=lfp] #goal.show ~ #cam .cam-border{--cc:var(--gcol)}
+
+/* Bandeau identité */
+html[data-skin=lfp] .lt{border-radius:0;clip-path:polygon(0 0,calc(100% - 22px) 0,100% 22px,100% 100%,22px 100%,0 calc(100% - 22px))}
+html[data-skin=lfp] #ltId,html[data-skin=lfp] #ltToast{background:var(--ch);box-shadow:none}
+html[data-skin=lfp] .wm{border-radius:0;background:var(--p1);box-shadow:none;clip-path:polygon(14px 0,100% 0,calc(100% - 14px) 100%,0 100%);padding:0 30px}
+html[data-skin=lfp] .host b{font-size:34px}
+html[data-skin=lfp] .lt-r{color:var(--p2)}
+html[data-skin=lfp] #ltToast .tk-ic{border-radius:0;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%)}
+html[data-skin=lfp] #ltSub{background:var(--gr);color:var(--ch)}
+html[data-skin=lfp] #ltSub .s2{color:#444441}
+
+/* Panneau d'infos */
+html[data-skin=lfp] #tabTitle{font-size:32px}
+html[data-skin=lfp] .dots i{border-radius:0;transform:skewX(-24deg);height:10px}
+html[data-skin=lfp] .dots i.on{background:var(--p2)}
+html[data-skin=lfp] .prog i{background:var(--p1)}
+html[data-skin=lfp] .dbar>div{height:10px;background:rgba(255,255,255,.07)}
+html[data-skin=lfp] .pitch{border-radius:0;background:#1d1d1c;box-shadow:inset 0 0 0 2px rgba(255,255,255,.1);
+  background-image:linear-gradient(rgba(255,255,255,.035) 2px,transparent 2px),linear-gradient(90deg,rgba(255,255,255,.035) 2px,transparent 2px);background-size:48px 48px}
+html[data-skin=lfp] .mk{border-color:rgba(255,255,255,.18)}
+html[data-skin=lfp] .pl b{border-radius:0;clip-path:polygon(5px 0,100% 0,calc(100% - 5px) 100%,0 100%);width:38px;font-size:20px}
+html[data-skin=lfp] .pl span{border-radius:0;background:rgba(22,22,22,.85)}
+html[data-skin=lfp] .ev{border-bottom-color:rgba(255,255,255,.07)}
+html[data-skin=lfp] .ev .m{font-size:32px}
+html[data-skin=lfp] .mc{border-radius:0;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px))}
+html[data-skin=lfp] .mc .s{background:var(--gr);color:var(--ch);border-radius:0;font-size:32px}
+html[data-skin=lfp] .rc-s{display:flex;align-items:center;gap:14px;font-size:132px}
+html[data-skin=lfp] .rc-s b{min-width:118px;height:140px;display:grid;place-items:center;padding-top:4px;background:var(--gr);color:var(--ch);
+  clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px))}
+html[data-skin=lfp] .rc-s i{font-size:0;width:14px;height:70px;background:var(--p2);transform:skewX(-14deg)}html[data-skin=lfp] #banner{background:var(--ch)}
+html[data-skin=lfp] #banner::before{width:16px;background:linear-gradient(var(--p1) 0 70%,var(--p2) 70% 100%)}
+html[data-skin=lfp] #banner .b1{font-size:110px}
+
+/* Bandeau défilant */
+html[data-skin=lfp] #ticker{border-radius:0;background:var(--ch);box-shadow:none;clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,18px 100%,0 calc(100% - 18px))}
+html[data-skin=lfp] #tkLabel{background:var(--p1);color:var(--p1Txt)}
+html[data-skin=lfp] .tk-view{box-shadow:none}
+html[data-skin=lfp] .tk-item{border-right-color:rgba(255,255,255,.08)}
+html[data-skin=lfp] .tsc{background:var(--gr);color:var(--ch);border-radius:0;font-size:26px}
+html[data-skin=lfp] .tmin{color:var(--p2)}
+
+/* BUT */
+html[data-skin=lfp] .g-top,html[data-skin=lfp] .g-bot{border-radius:0}
+html[data-skin=lfp] .g-word{font-size:230px;letter-spacing:2px}
+html[data-skin=lfp] .g-bot{background:var(--ch);box-shadow:none}
+html[data-skin=lfp] .g-scorer{font-size:120px}
+
+/* Fond autour de l'overlay */
+html[data-skin=lfp] #bgLayer .dec-laliga{display:none}
+html[data-skin=lfp] #bgLayer .dec-lfp{display:inline}
+html[data-skin=lfp] #bgLayer .holeg{clip-path:url(#holeSharp)}
+
+/* Réglages */
+html[data-skin=lfp] .sbox{border-radius:0;background:var(--ch);box-shadow:none}
+html[data-skin=lfp] .sbox input,html[data-skin=lfp] .sbox select{border-radius:0;background:var(--nr)}
+html[data-skin=lfp] .sbox button{border-radius:0;clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);padding-left:30px;padding-right:30px}
+html[data-skin=lfp] .sbox button.pri{background:var(--p1);color:var(--p1Txt)}
+html[data-skin=lfp] #todayBox{border-radius:0}
 </style>
 </head>
 <body>
 <div id="stage">
   <!-- Fond autour de l'overlay (thème LaLiga : blanc + traces rouges), percé à l'endroit de la webcam -->
   <svg id="bgLayer" width="1080" height="1920" viewBox="0 0 1080 1920" aria-hidden="true">
-    <defs><clipPath id="holeClip"><path clip-rule="evenodd" d="M0 0H1080V1920H0Z M64 466H1016A24 24 0 0 1 1040 490V1102A24 24 0 0 1 1016 1126H64A24 24 0 0 1 40 1102V490A24 24 0 0 1 64 466Z"/></clipPath></defs>
-    <g clip-path="url(#holeClip)">
+    <defs>
+      <clipPath id="holeClip"><path clip-rule="evenodd" d="M0 0H1080V1920H0Z M64 466H1016A24 24 0 0 1 1040 490V1102A24 24 0 0 1 1016 1126H64A24 24 0 0 1 40 1102V490A24 24 0 0 1 64 466Z"/></clipPath>
+      <clipPath id="holeSharp"><path clip-rule="evenodd" d="M0 0H1080V1920H0Z M40 466H1040V1126H40Z"/></clipPath>
+      <pattern id="lfpGrid" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M60 0H0V60" fill="none" stroke="#ffffff" stroke-opacity=".05" stroke-width="2"/></pattern>
+    </defs>
+    <g class="holeg" clip-path="url(#holeClip)">
       <rect width="1080" height="1920" style="fill:var(--bg)"/>
-      <g style="fill:var(--decor)" transform="rotate(-32 540 960)">
-        <rect x="-60" y="-600" width="30" height="3200"/><rect x="-10" y="-600" width="10" height="3200"/>
-        <rect x="430" y="-600" width="14" height="3200"/>
-        <rect x="1010" y="-600" width="44" height="3200"/><rect x="1072" y="-600" width="12" height="3200"/>
+      <!-- Thème LaLiga : traces rouges -->
+      <g class="dec-laliga">
+        <g style="fill:var(--decor)" transform="rotate(-32 540 960)">
+          <rect x="-60" y="-600" width="30" height="3200"/><rect x="-10" y="-600" width="10" height="3200"/>
+          <rect x="430" y="-600" width="14" height="3200"/>
+          <rect x="1010" y="-600" width="44" height="3200"/><rect x="1072" y="-600" width="12" height="3200"/>
+        </g>
+        <rect x="0" y="1744" width="1080" height="8" style="fill:var(--decor)"/>
       </g>
-      <rect x="0" y="1744" width="1080" height="8" style="fill:var(--decor)"/>
+      <!-- Skin LFP (L1 / L2) : grille + barres penchées aux deux couleurs de la ligue -->
+      <g class="dec-lfp">
+        <rect width="1080" height="1920" fill="url(#lfpGrid)"/>
+        <g transform="skewX(-20)">
+          <rect x="1180" y="0" width="74" height="560" style="fill:var(--p1)"/>
+          <rect x="1272" y="0" width="16" height="560" style="fill:var(--p2)"/>
+          <rect x="560" y="1660" width="74" height="260" style="fill:var(--p1)"/>
+          <rect x="652" y="1660" width="16" height="260" style="fill:var(--p2)"/>
+          <rect x="1350" y="1240" width="34" height="680" style="fill:var(--p1)"/>
+        </g>
+      </g>
     </g>
   </svg>
 
@@ -286,6 +434,7 @@ body.preview #status{display:block}
 
   <!-- ===== TABLEAU DE SCORE ===== -->
   <section id="score" class="panel pre">
+    <span id="ghostNum" class="ghost" aria-hidden="true"></span>
     <div class="comp">
       <div class="comp-l"><span class="lg"><img id="leagueLogo" alt=""></span><span id="leagueName">—</span><span id="round"></span></div>
       <span id="livePill" class="pill dark"><span class="dot"></span><span id="pillTxt">Avant-match</span></span>
@@ -371,7 +520,9 @@ body.preview #status{display:block}
   <!-- ===== RÉGLAGES (touche S) ===== -->
   <div id="settings"><div class="sbox">
     <h2>Réglages du match</h2>
-    <p class="note">Dans OBS : clic droit sur la source → <b>Interagir</b>, puis touche <b>S</b>. Les réglages restent enregistrés pour les prochains lives.</p>
+    <p class="note">Cherche ton match, clique <b>Principal</b> puis <b>Enregistrer</b>. Le lien ci-dessous se met à jour : c'est lui que tu colles dans TikTok LIVE Studio (source Lien).</p>
+    <label>Lien à coller dans TikTok Studio</label>
+    <div class="linkrow"><input id="fLink" readonly><button id="bCopy">Copier le lien</button></div>
     <label>Clé API-Football (dashboard.api-football.com)</label>
     <input id="fKey" type="password" placeholder="ta clé x-apisports-key">
     <div class="g2">
@@ -436,12 +587,16 @@ const THEMES = {
   real:      {label:"Real Madrid",              nav:"#121212",navm:"#2b2b2b",navd:"#050505",acc:"#ffffff",acc2:"#d4af37",red:"#febe10"},
   city:      {label:"Man City",                 nav:"#071a3a",navm:"#0e3e8c",navd:"#040d1f",acc:"#6cabdd",acc2:"#ffd21e",red:"#1c2c5b"},
   roma:      {label:"AS Roma",                  nav:"#3a0b0b",navm:"#6e1414",navd:"#1a0404",acc:"#f0a13c",acc2:"#ffcf7a",red:"#8a1538"},
-  ligue1:    {label:"Ligue 1",                  nav:"#0a0f2e",navm:"#1b2566",navd:"#050714",acc:"#ffd21e",acc2:"#ff6b00",red:"#e5243b"},
+  // Ligue 1 / Ligue 2 : skin "lfp" (DA officielle 2024 : base charbon + 2 couleurs par ligue)
+  ligue1:    {label:"Ligue 1 (bleu électrique / rose)", skin:"lfp", num:"1", p1:"#085fff", p2:"#ff7fde",
+              nav:"#262624",navm:"#444441",navd:"#161616",acc:"#ff7fde",acc2:"#085fff",red:"#085fff",bg:"#161616"},
+  ligue2:    {label:"Ligue 2 (violet / aqua)",  skin:"lfp", num:"2", p1:"#7e4df7", p2:"#74fbd3",
+              nav:"#262624",navm:"#444441",navd:"#161616",acc:"#74fbd3",acc2:"#7e4df7",red:"#7e4df7",bg:"#161616"},
   laliga:    {label:"LaLiga (rouge/noir/blanc)", nav:"#0d0d0d",navm:"#1c1c1c",navd:"#050505",acc:"#ff4b44",acc2:"#ffffff",red:"#ff4b44",bg:"#ffffff",decor:"#ff4b44"}
 };
 const THEME_ORDER = Object.keys(THEMES);
 const CLUB_THEME = {85:"psg",541:"real",50:"city",497:"roma"};          // IDs API-Football
-const LEAGUE_THEME = {2:"ldc",3:"europa",848:"conference",61:"ligue1",140:"laliga"};
+const LEAGUE_THEME = {2:"ldc",3:"europa",848:"conference",61:"ligue1",62:"ligue2",140:"laliga"};
 const TOP = [2,3,848,1,4,5,32,39,140,135,78,61,62,66,45,143,137,81,94,88];
 
 const API = "https://v3.football.api-sports.io/";
@@ -528,6 +683,12 @@ function applyTheme(name){
   themeName=name; const t=THEMES[name];
   [["--nav",t.nav],["--navm",t.navm],["--navd",t.navd],["--acc",t.acc],["--acc2",t.acc2],["--red",t.red],["--ovd",t.navd],["--bg",t.bg||"transparent"],["--decor",t.decor||"transparent"]].forEach(([k,v])=>root.style.setProperty(k,v));
   const bgl=document.getElementById("bgLayer"); if(bgl) bgl.classList.toggle("on",!!t.bg);
+  // Skin : change formes, typo et motifs (pas seulement les couleurs)
+  if(t.skin) root.dataset.skin=t.skin; else delete root.dataset.skin;
+  root.dataset.theme=name;
+  const p1=t.p1||t.acc, p2=t.p2||t.acc2;
+  [["--p1",p1],["--p2",p2],["--p1Txt",txtOn(p1,"#262624")],["--p2Txt",txtOn(p2,"#262624")]].forEach(([k,v])=>root.style.setProperty(k,v));
+  const gn=document.getElementById("ghostNum"); if(gn) gn.textContent=t.num||"";
   root.style.setProperty("--accTxt",txtOn(t.acc,t.nav));
   root.style.setProperty("--redTxt",txtOn(t.red,t.nav));
   teamSig=""; if(S.fx) setTeamColors(S.fx);
@@ -708,7 +869,7 @@ function renderResult(f){
   scorersList(f,"home").forEach(o=>ctx.push(o.n+" "+o.m)); scorersList(f,"away").forEach(o=>ctx.push(o.n+" "+o.m));
   const tag = st==="HT" ? "Mi-temps" : END.includes(st) ? "Score final" : "Live";
   $("rcBox").innerHTML='<span class="pill red">'+tag+' · '+esc(leagueFR(f.league))+'</span>'+
-    '<div class="rc-row"><div class="rc-t">'+imgTag(H.logo)+'<span>'+esc(disp(H.name))+'</span></div><div class="rc-s">'+(f.goals.home||0)+' - '+(f.goals.away||0)+'</div><div class="rc-t">'+imgTag(A.logo)+'<span>'+esc(disp(A.name))+'</span></div></div>'+
+    '<div class="rc-row"><div class="rc-t">'+imgTag(H.logo)+'<span>'+esc(disp(H.name))+'</span></div><div class="rc-s"><b>'+(f.goals.home||0)+'</b><i> - </i><b>'+(f.goals.away||0)+'</b></div><div class="rc-t">'+imgTag(A.logo)+'<span>'+esc(disp(A.name))+'</span></div></div>'+
     '<div class="rc-ctx">'+(ctx.length?"⚽ "+esc(ctx.join(" · ")):"Pas encore de but")+'</div>';
 }
 
@@ -856,8 +1017,8 @@ function detect(f,first){
   });
   fresh.forEach(e=>{
     const logo=e.team&&e.team.logo, t=evText(e)[0], m=e.time.elapsed+(e.time.extra?"+"+e.time.extra:"")+"'";
-    if(e.type==="Card"&&/Red|Second/i.test(e.detail)) toast({icon:'<i class="card-ic r"></i>',pill:"red",tag:"Carton rouge",title:t,sub:m+(/Second/i.test(e.detail)?" · Deuxième jaune":" · Expulsion"),logo});
-    else if(e.type==="Card") toast({icon:'<i class="card-ic y"></i>',pill:"yellow",tag:"Carton jaune",title:t,sub:m,logo});
+    if(e.type==="Card"&&/Red|Second/i.test(e.detail)) toast({icon:'<i class="card-ic r"></i>',pill:"rcard",tag:"Carton rouge",title:t,sub:m+(/Second/i.test(e.detail)?" · Deuxième jaune":" · Expulsion"),logo});
+    else if(e.type==="Card") toast({icon:'<i class="card-ic y"></i>',pill:"ycard",tag:"Carton jaune",title:t,sub:m,logo});
     else if(e.type==="subst") toast({icon:ICON.sub,pill:"green",tag:"Changement",title:t,sub:m,logo});
     else if(e.type==="Var") toast({icon:'<span class="var-ic">VAR</span>',pill:"white",tag:"VAR",title:e.detail||"Vidéo",sub:t,logo});
     else if(e.type==="Goal"&&e.detail==="Missed Penalty") toast({icon:"❌",pill:"red",tag:"Penalty manqué",title:t,sub:m,logo});
@@ -990,12 +1151,31 @@ function openSettings(){
   $("fHost").value=cfg.hostName; $("fHandle").value=cfg.handle; $("fDemo").checked=!!cfg.demo;
   $("sMsg").textContent = S.remaining!=null ? "Requêtes API restantes aujourd'hui : "+S.remaining : "";
   $("settings").classList.add("on");
+  updateLink();
+}
+/* Lien complet (clé + match + thème) : c'est ce lien qu'on colle dans TikTok Studio */
+function tiktokLink(){
+  const p=new URLSearchParams();
+  const k=$("fKey").value.trim(), fx=$("fFix").value.trim(), tk=$("fTick").value.trim(), th=$("fTheme").value;
+  if(k) p.set("key",k);
+  if(fx) p.set("fixture",fx); else { const tm=$("fTeam").value.trim(); if(tm) p.set("team",tm); }
+  if(tk) p.set("ticker",tk);
+  if(th && th!=="auto") p.set("theme",th);
+  const q=p.toString();
+  return location.origin+location.pathname+(q?"?"+q:"");
+}
+function updateLink(){ $("fLink").value=tiktokLink(); }
+function copyLink(){
+  const v=tiktokLink(), ok=()=>{ $("sMsg").textContent="Lien copié. Colle-le dans TikTok Studio : source Lien → champ URL → Appliquer."; };
+  if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(v).then(ok,()=>{ $("fLink").select(); try{ document.execCommand("copy"); ok(); }catch(e){} });
+  else { $("fLink").select(); try{ document.execCommand("copy"); ok(); }catch(e){} }
 }
 const closeSettings=()=>$("settings").classList.remove("on");
 function saveSettings(){
   const o=Object.assign({},saved,{apiKey:$("fKey").value.trim(),fixtureId:$("fFix").value.trim(),tickerIds:$("fTick").value.trim(),teamId:$("fTeam").value.trim(),pollSeconds:Number($("fPoll").value)||100,rotateSeconds:Number($("fRot").value)||14,subEveryMin:Number($("fSub").value)||4,theme:$("fTheme").value,hostName:$("fHost").value.trim()||"ERWANE",handle:$("fHandle").value.trim()||"@lapanenka.fr",demo:$("fDemo").checked});
-  try{ localStorage.setItem(LS_KEY,JSON.stringify(o)); location.reload(); }
-  catch(e){ $("sMsg").textContent="Impossible d'enregistrer ici : utilise les paramètres d'URL (?key=…&fixture=…)."; }
+  try{ localStorage.setItem(LS_KEY,JSON.stringify(o)); }catch(e){}
+  // On recharge sur le lien complet : les paramètres de l'adresse ne peuvent plus écraser le nouveau match
+  location.href=tiktokLink();
 }
 async function loadToday(){
   const key=$("fKey").value.trim(); if(!key){ $("sMsg").textContent="Entre d'abord ta clé API."; return; }
@@ -1040,11 +1220,13 @@ function init(){
   const src = cfg.logo || LOGO_EMBED;
   document.querySelectorAll("img.logo").forEach(img=>{ img.onerror=()=>img.parentNode.classList.add("nologo"); img.src=src; });
   if(!src) document.querySelectorAll(".wm").forEach(w=>w.classList.add("nologo"));
-  $("bSave").onclick=saveSettings; $("bClose").onclick=closeSettings; $("bToday").onclick=loadToday;
+  $("bSave").onclick=saveSettings; $("bClose").onclick=closeSettings; $("bToday").onclick=loadToday; $("bCopy").onclick=copyLink;
+  ["fKey","fFix","fTick","fTeam","fTheme"].forEach(id=>{ $(id).addEventListener("input",updateLink); $(id).addEventListener("change",updateLink); });
   $("fSearch").oninput=()=>{ if(S.today.length) listToday(); };
   $("todayBox").onclick=e=>{ const b=e.target.closest("button"); if(!b) return;
-    if(b.dataset.main){ $("fFix").value=b.dataset.main; $("fDemo").checked=false; $("sMsg").textContent="Match principal : "+b.dataset.main+" → clique ENREGISTRER"; }
-    if(b.dataset.add){ const cur=$("fTick").value.split(/[^0-9]+/).filter(Boolean); if(!cur.includes(b.dataset.add)) cur.push(b.dataset.add); $("fTick").value=cur.join("-"); } };
+    if(b.dataset.main){ $("fFix").value=b.dataset.main; $("fDemo").checked=false; const row=b.closest(".trow"); $("sMsg").textContent="Match choisi : "+(row?row.children[2].textContent:b.dataset.main)+" → clique ENREGISTRER"; }
+    if(b.dataset.add){ const cur=$("fTick").value.split(/[^0-9]+/).filter(Boolean); if(!cur.includes(b.dataset.add)) cur.push(b.dataset.add); $("fTick").value=cur.join("-"); }
+    updateLink(); };
   renderTicker(); showTab("stats");
   setInterval(tickClock,250);
   setInterval(()=>{ if(!paused && Date.now()-lastSwitch>=cfg.rotateSeconds*1000) step(1); },500);
