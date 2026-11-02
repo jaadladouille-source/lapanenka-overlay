@@ -238,6 +238,27 @@ body.ph .cam-ph{display:flex}
 #goal.show .g-word{animation:up .5s var(--ease) .3s backwards}
 #goal.show .g-team,#goal.show .g-scorer{animation:up .5s var(--ease) .45s backwards}
 #goal.show .g-meta,#goal.show .g-score{animation:up .5s var(--ease) .6s backwards}
+/* Confettis (paliers des 1000 abonnés) */
+#confetti{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:6}
+.cf{position:absolute;top:-40px;border-radius:2px;animation:cfall linear forwards}
+@keyframes cfall{to{transform:translateY(2000px) rotate(760deg)}}
+/* Palier abonnés dans le volet BUT */
+.mile-prog{display:flex;align-items:center;gap:18px;font:600 24px/1 var(--ui);color:var(--cream)}
+.mile-prog .mb{width:520px;height:14px;border-radius:7px;background:rgba(255,255,255,.12);overflow:hidden}
+.mile-prog .mb i{display:block;height:100%;background:var(--gcol);border-radius:7px}
+
+/* ---------- Objectif abonnés (bandeau identité) ---------- */
+.subgoal{display:none;flex:1;min-width:0;max-width:420px;margin-left:10px;flex-direction:column;gap:8px}
+.subgoal.on{display:flex}
+.sg-top{display:flex;align-items:baseline;gap:8px;white-space:nowrap}
+.sg-top b{font:400 30px/1 var(--anton);letter-spacing:.5px}
+.sg-top span{font:600 16px/1 var(--ui);color:var(--muted)}
+.sg-top em{margin-left:auto;font:600 14px/1 var(--ui);color:var(--muted);font-style:normal}
+.sg-bar{height:9px;border-radius:5px;background:var(--tile);overflow:hidden;position:relative}
+.sg-bar i{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:5px;background:var(--acc);transition:width 1.2s var(--ease)}
+.subgoal.pop .sg-top b{animation:bump 1.3s var(--ease)}
+.subgoal.pop .sg-bar{animation:sgFlash 1.2s var(--ease)}
+@keyframes sgFlash{0%,100%{box-shadow:none}30%{box-shadow:0 0 0 3px var(--acc)}}
 
 /* ---------- Outils ---------- */
 .hint{position:absolute;top:28px;left:40px;right:40px;text-align:center;font:600 19px/1.5 var(--ui);color:rgba(255,255,255,.55);display:none}
@@ -500,6 +521,17 @@ html[data-skin=ucl] #bgLayer .dec-ucl{display:inline}
 /* Réglages */
 html[data-skin=ucl] .sbox{background:var(--nav)}
 html[data-skin=ucl] .sbox button.pri{background:var(--p1);color:#fff}
+
+/* Objectif abonnés : déclinaisons par skin */
+html[data-skin=lfp] .sg-top b{font-weight:900;font-stretch:62%;font-size:34px}
+html[data-skin=lfp] :is(.sg-top span,.sg-top em,.mile-prog){font-stretch:100%;font-weight:600}
+html[data-skin=lfp] .sg-bar{border-radius:0;height:10px;transform:skewX(-20deg)}
+html[data-skin=lfp] .sg-bar i{border-radius:0;background:var(--p2)}
+html[data-skin=lfp] :is(.mile-prog .mb,.mile-prog .mb i){border-radius:0}
+html[data-skin=lfp] .mile-prog .mb{transform:skewX(-20deg)}
+html[data-skin=ucl] .sg-top b{font-weight:900;font-size:36px}
+html[data-skin=ucl] :is(.sg-top span,.sg-top em,.mile-prog){font-weight:600}
+html[data-skin=ucl] .sg-bar i{background:var(--prism)}
 </style>
 </head>
 <body>
@@ -558,7 +590,7 @@ html[data-skin=ucl] .sbox button.pri{background:var(--p1);color:#fff}
     </g>
   </svg>
 
-  <div class="hint">Aperçu navigateur · <b>S</b> réglages · <b>T</b> thème suivant · <b>A</b> thème auto · <b>G</b> test but · <b>U</b> abonne-toi · <b>H</b> zones TikTok · <b>W</b> webcam · <b>← →</b> panneaux · <b>P</b> pause</div>
+  <div class="hint">Aperçu navigateur · <b>S</b> réglages · <b>T</b> thème suivant · <b>A</b> thème auto · <b>G</b> test but · <b>U</b> abonne-toi · <b>F</b> test abonné · <b>K</b> test palier 1000 · <b>H</b> zones TikTok · <b>W</b> webcam · <b>← →</b> panneaux · <b>P</b> pause</div>
 
   <!-- ===== TABLEAU DE SCORE ===== -->
   <section id="score" class="panel pre">
@@ -581,6 +613,7 @@ html[data-skin=ucl] .sbox button.pri{background:var(--p1);color:#fff}
 
   <!-- ===== ANIMATION BUT (placée avant la webcam pour colorer son cadre) ===== -->
   <div id="goal">
+    <div id="confetti"></div>
     <div class="g-top"><img id="gCrest" class="g-crest" alt=""><div class="g-word">BUT</div></div>
     <div class="g-bot">
       <div id="gTeam" class="g-team"></div>
@@ -608,6 +641,10 @@ html[data-skin=ucl] .sbox button.pri{background:var(--p1);color:#fff}
     <div id="ltId" class="lt">
       <div class="wm"><img class="logo" alt="La Panenka"><b>LA PANENKA</b></div>
       <div class="host"><b id="hostName">Erwane</b><span>Commentaire</span></div>
+      <div class="subgoal" id="subGoal">
+        <div class="sg-top"><b id="sgNow">0</b><span id="sgNext"></span><em id="sgFinal"></em></div>
+        <div class="sg-bar"><i id="sgFill"></i></div>
+      </div>
       <div class="lt-r" id="handleTxt">@lapanenka.fr</div>
     </div>
     <div id="ltToast" class="lt hide"></div>
@@ -665,6 +702,10 @@ html[data-skin=ucl] .sbox button.pri{background:var(--p1);color:#fff}
       <div><label>IDs multiplex (tirets) — vide = auto</label><input id="fTick" placeholder="ex : 111-222-333"></div>
     </div>
     <div class="g2"><div><label>Équipe suivie (ID) — utilisée si l'ID du match est vide</label><input id="fTeam" placeholder="541 = Real Madrid"></div><div></div></div>
+    <div class="g2">
+      <div><label>Mes abonnés TikTok maintenant</label><input id="fSubs" type="number" min="0" placeholder="ex : 2860 (vide = pas de barre)"></div>
+      <div><label>Objectif final</label><input id="fSubGoal" type="number" min="100" placeholder="10000"></div>
+    </div>
     <label>Trouver un match du jour</label>
     <div class="g2"><input id="fSearch" placeholder="Filtrer : équipe ou compétition…"><button id="bToday">Matchs du jour (1 requête)</button></div>
     <div id="todayBox"></div>
@@ -709,6 +750,8 @@ const CONFIG = {
   brand: "LA PANENKA",
   handle: "@lapanenka.fr",
   logo: "",                  // vide = logo intégré. Sinon nom d'un fichier PNG à côté de l'overlay.
+  subs: "",                  // abonnés TikTok au début du live (vide = pas de barre d'objectif)
+  subGoal: 10000,            // objectif final affiché à côté de la barre
   promos: ["Suis @lapanenka.fr sur TikTok et Instagram"]
 };
 
@@ -745,7 +788,7 @@ let saved = {};
 try { saved = JSON.parse(localStorage.getItem(LS_KEY) || "{}") || {}; } catch(e) {}
 const qs = new URLSearchParams(location.search);
 const cfg = Object.assign({}, CONFIG, saved);
-const QMAP = {key:"apiKey",fixture:"fixtureId",team:"teamId",ticker:"tickerIds",poll:"pollSeconds",rotate:"rotateSeconds",theme:"theme",name:"hostName",handle:"handle",logo:"logo",sub:"subEveryMin"};
+const QMAP = {key:"apiKey",fixture:"fixtureId",team:"teamId",ticker:"tickerIds",poll:"pollSeconds",rotate:"rotateSeconds",theme:"theme",name:"hostName",handle:"handle",logo:"logo",sub:"subEveryMin",subs:"subs",subgoal:"subGoal"};
 qs.forEach((v,k)=>{ if(QMAP[k]) cfg[QMAP[k]] = v; });
 cfg.pollSeconds = Math.max(15, Number(cfg.pollSeconds) || 100);
 cfg.rotateSeconds = Math.max(6, Number(cfg.rotateSeconds) || 14);
@@ -777,6 +820,7 @@ const ICON = {
   events:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg>',
   multi:'<svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg>',
   result:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 3h12v3h3v3a5 5 0 0 1-5 5 6 6 0 0 1-3 2v3h4v2H7v-2h4v-3a6 6 0 0 1-3-2 5 5 0 0 1-5-5V6h3zm0 5H5v1a3 3 0 0 0 1.4 2.5zm12 0v3.5A3 3 0 0 0 19 9V8z"/></svg>',
+  follow:'<svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><circle cx="10" cy="8" r="4"/><path d="M2 20c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5z"/><path d="M19 7v6M16 10h6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>',
   sub:'<svg class="sub-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13l-4-4M20 16H7l4 4"/></svg>'
 };
 
@@ -1128,6 +1172,62 @@ function runLT(){
 }
 function subscribe(){ subPending=true; runLT(); }
 
+/* ---------- Objectif abonnés ----------
+   Départ : le nombre saisi dans les réglages (?subs=2860).
+   En direct : +1 à chaque nouvel abonné reçu de TikFinity (appli gratuite, ws://127.0.0.1:21213).
+   Petit palier tous les 100 (bandeau), grosse animation + confettis tous les 1000 et à l'objectif final. */
+const SUBS = { base:0, n:0, goal:10000, step:100, big:1000, seen:new Set(), ws:null };
+const SUBS_LS = "lapanenka_subs_v1";
+const fmtN = v => String(Math.round(v)).replace(/\B(?=(\d{3})+(?!\d))/g," ");
+function initSubs(){
+  SUBS.base = Math.max(0, parseInt(cfg.subs,10)||0);
+  if(!SUBS.base && S.demo) SUBS.base = 2860;              // aperçu en mode démo
+  SUBS.goal = Math.max(100, parseInt(cfg.subGoal,10)||10000);
+  SUBS.n = SUBS.base;
+  // si l'overlay se recharge pendant le live, on garde les abonnés gagnés depuis le début
+  try{ const s=JSON.parse(localStorage.getItem(SUBS_LS)||"null"); if(s && s.base===SUBS.base && Date.now()-s.at<12*3600e3 && s.n>SUBS.n) SUBS.n=s.n; }catch(e){}
+  renderSubs();
+  if(SUBS.base && !S.demo) connectTikfinity();
+}
+function saveSubs(){ try{ localStorage.setItem(SUBS_LS,JSON.stringify({base:SUBS.base,n:SUBS.n,at:Date.now()})); }catch(e){} }
+function nextCap(n){ return (Math.floor(n/SUBS.step)+1)*SUBS.step; }
+function renderSubs(pop){
+  const box=$("subGoal"); box.classList.toggle("on",!!SUBS.base);
+  if(!SUBS.base) return;
+  const n=SUBS.n, next=nextCap(n), prev=next-SUBS.step;
+  $("sgNow").textContent=fmtN(n);
+  $("sgNext").textContent="/ "+fmtN(next)+" abonnés";
+  $("sgFinal").textContent = n>=SUBS.goal ? "Objectif "+fmtN(SUBS.goal)+" atteint" : "Objectif "+fmtN(SUBS.goal);
+  $("sgFill").style.width=Math.max(2,(n-prev)/SUBS.step*100)+"%";
+  $("subHandle").textContent="Plus que "+fmtN(next-n)+" avant "+fmtN(next)+" · "+(cfg.handle||"");
+  if(pop){ box.classList.remove("pop"); void box.offsetWidth; box.classList.add("pop"); }
+}
+function addFollowers(k,who,test){
+  if(!SUBS.base) return;
+  const old=SUBS.n; SUBS.n=Math.max(0,old+k); if(!test) saveSubs(); renderSubs(k>0);
+  if(k<=0) return;
+  const caps=[]; for(let m=nextCap(old); m<=SUBS.n; m+=SUBS.step) caps.push(m);
+  if(who && !caps.length) toast({kind:"follow",icon:ICON.follow,pill:"yellow",tag:"Nouvel abonné",title:who,sub:"Plus que "+fmtN(nextCap(SUBS.n)-SUBS.n)+" avant "+fmtN(nextCap(SUBS.n))});
+  caps.forEach(m=>{
+    if(m%SUBS.big===0 || m===SUBS.goal) mileFx(m);
+    else toast({icon:"🎉",pill:"yellow",tag:"Cap franchi",title:fmtN(m)+" abonnés",sub:"Merci ! Prochain cap : "+fmtN(m+SUBS.step)});
+  });
+}
+function connectTikfinity(){
+  let ws; try{ ws=new WebSocket("ws://127.0.0.1:21213/"); }catch(e){ setTimeout(connectTikfinity,20000); return; }
+  SUBS.ws=ws;
+  ws.onmessage=e=>{
+    let m; try{ m=JSON.parse(e.data); }catch(x){ return; }
+    const ev=m&&m.event, d=(m&&m.data)||{};
+    const isFollow = ev==="follow" || (ev==="social" && /follow/i.test(String(d.displayType||d.label||"")));
+    if(!isFollow) return;
+    const id=d.userId||d.uniqueId; if(id){ if(SUBS.seen.has(id)) return; SUBS.seen.add(id); }
+    addFollowers(1,d.nickname||d.uniqueId||"");
+  };
+  ws.onclose=()=>{ SUBS.ws=null; setTimeout(connectTikfinity,15000); };
+  ws.onerror=()=>{ try{ ws.close(); }catch(x){} };
+}
+
 /* ---------- Animation BUT ---------- */
 const gq=[]; let gBusy=false;
 function goalFx(side,ev,f){ gq.push({side,ev,f}); runGoal(); }
@@ -1138,8 +1238,25 @@ function confetti(col){
   for(let i=0;i<70;i++){ const w=9+Math.random()*12; h+='<i class="cf" style="left:'+(Math.random()*100)+'%;width:'+w+'px;height:'+(w*.6)+'px;background:'+cols[i%4]+';animation-duration:'+(2.8+Math.random()*2.2)+'s;animation-delay:'+(Math.random()*1.4)+'s"></i>'; }
   box.innerHTML=h;
 }
+function mileFx(n){ gq.push({mile:n}); runGoal(); }
+function runMile(n){
+  const g=$("goal"), cs=getComputedStyle(root), col=(cs.getPropertyValue("--acc").trim()||"#ffd21e");
+  root.style.setProperty("--gcol",col); root.style.setProperty("--gtxt",txtOn(col));
+  $("gCrest").style.display="none";
+  const w=g.querySelector(".g-word"); w.textContent=fmtN(n);
+  const done=n>=SUBS.goal;
+  $("gTeam").textContent=done?"Objectif atteint":"Cap franchi";
+  $("gScorer").textContent="Abonnés";
+  $("gMeta").textContent=done?"Merci à tous, on vise encore plus haut":"Merci ! Prochain objectif : "+fmtN(SUBS.goal);
+  const pct=Math.min(100,n/SUBS.goal*100);
+  $("gScore").innerHTML='<div class="mile-prog"><div class="mb"><i style="width:'+pct+'%"></i></div><span>'+fmtN(n)+' / '+fmtN(SUBS.goal)+'</span></div>';
+  confetti(col);
+  g.classList.remove("show"); void g.offsetWidth; g.classList.add("show");
+  setTimeout(()=>{ g.classList.remove("show"); $("confetti").innerHTML=""; $("gCrest").style.display=""; w.textContent="BUT"; gBusy=false; setTimeout(runGoal,500); },6600);
+}
 function runGoal(){
   if(gBusy||!gq.length) return; gBusy=true;
+  if(gq[0].mile){ runMile(gq.shift().mile); return; }
   const {side,ev,f}=gq.shift(), team=f.teams[side], g=$("goal");
   const col=getComputedStyle(root).getPropertyValue(side==="home"?"--home":"--away").trim()||"#ffd21e";
   root.style.setProperty("--gcol",col); root.style.setProperty("--gtxt",txtOn(col));
@@ -1300,6 +1417,7 @@ function openSettings(){
   $("fTheme").innerHTML='<option value="auto">Auto (club / compétition)</option>'+THEME_ORDER.map(k=>'<option value="'+k+'">'+THEMES[k].label+'</option>').join("");
   $("fTheme").value=cfg.theme||"auto";
   $("fHost").value=cfg.hostName; $("fHandle").value=cfg.handle; $("fDemo").checked=!!cfg.demo;
+  $("fSubs").value=cfg.subs||""; $("fSubGoal").value=cfg.subGoal||10000;
   $("sMsg").textContent = S.remaining!=null ? "Requêtes API restantes aujourd'hui : "+S.remaining : "";
   $("settings").classList.add("on");
   updateLink();
@@ -1312,6 +1430,9 @@ function tiktokLink(forTikTok=true){
   if(fx) p.set("fixture",fx); else { const tm=$("fTeam").value.trim(); if(tm) p.set("team",tm); }
   if(tk) p.set("ticker",tk);
   if(th && th!=="auto") p.set("theme",th);
+  const sb=$("fSubs").value.trim(), sg=$("fSubGoal").value.trim();
+  if(sb) p.set("subs",sb);
+  if(sb && sg && sg!=="10000") p.set("subgoal",sg);
   if(forTikTok) p.set("live","1");   // dans TikTok : pas d'aide à l'écran, zone webcam transparente
   const q=p.toString();
   return location.origin+location.pathname+(q?"?"+q:"");
@@ -1324,7 +1445,7 @@ function copyLink(){
 }
 const closeSettings=()=>$("settings").classList.remove("on");
 function saveSettings(){
-  const o=Object.assign({},saved,{apiKey:$("fKey").value.trim(),fixtureId:$("fFix").value.trim(),tickerIds:$("fTick").value.trim(),teamId:$("fTeam").value.trim(),pollSeconds:Number($("fPoll").value)||100,rotateSeconds:Number($("fRot").value)||14,subEveryMin:Number($("fSub").value)||4,theme:$("fTheme").value,hostName:$("fHost").value.trim()||"ERWANE",handle:$("fHandle").value.trim()||"@lapanenka.fr",demo:$("fDemo").checked});
+  const o=Object.assign({},saved,{apiKey:$("fKey").value.trim(),fixtureId:$("fFix").value.trim(),tickerIds:$("fTick").value.trim(),teamId:$("fTeam").value.trim(),pollSeconds:Number($("fPoll").value)||100,rotateSeconds:Number($("fRot").value)||14,subEveryMin:Number($("fSub").value)||4,theme:$("fTheme").value,hostName:$("fHost").value.trim()||"ERWANE",handle:$("fHandle").value.trim()||"@lapanenka.fr",demo:$("fDemo").checked,subs:$("fSubs").value.trim(),subGoal:Number($("fSubGoal").value)||10000});
   try{ localStorage.setItem(LS_KEY,JSON.stringify(o)); }catch(e){}
   // On recharge sur le lien complet : les paramètres de l'adresse ne peuvent plus écraser le nouveau match
   location.href=tiktokLink(false);
@@ -1356,6 +1477,8 @@ addEventListener("keydown",e=>{
   else if(k==="w") document.body.classList.toggle("ph");
   else if(k==="g" && S.fx){ const gl=goalsOf(S.fx,"home"); goalFx("home",gl[gl.length-1]||null,S.fx); }
   else if(k==="b" && S.fx) banner("Coup d'envoi","",S.fx);
+  else if(k==="f") addFollowers(1,"Test abonné",true);                                  // test : +1 abonné (non enregistré)
+  else if(k==="k" && SUBS.base){ SUBS.n=(Math.floor(SUBS.n/SUBS.big)+1)*SUBS.big-1; addFollowers(1,"",true); }   // test : palier des 1000
   else if(k==="arrowright") step(1);
   else if(k==="arrowleft") step(-1);
   else if(k==="p"){ paused=!paused; showTab(curTab); }
@@ -1373,7 +1496,7 @@ function init(){
   document.querySelectorAll("img.logo").forEach(img=>{ img.onerror=()=>img.parentNode.classList.add("nologo"); img.src=src; });
   if(!src) document.querySelectorAll(".wm").forEach(w=>w.classList.add("nologo"));
   $("bSave").onclick=saveSettings; $("bClose").onclick=closeSettings; $("bToday").onclick=loadToday; $("bCopy").onclick=copyLink;
-  ["fKey","fFix","fTick","fTeam","fTheme"].forEach(id=>{ $(id).addEventListener("input",updateLink); $(id).addEventListener("change",updateLink); });
+  ["fKey","fFix","fTick","fTeam","fTheme","fSubs","fSubGoal"].forEach(id=>{ $(id).addEventListener("input",updateLink); $(id).addEventListener("change",updateLink); });
   $("fSearch").oninput=()=>{ if(S.today.length) listToday(); };
   $("todayBox").onclick=e=>{ const b=e.target.closest("button"); if(!b) return;
     if(b.dataset.main){ $("fFix").value=b.dataset.main; $("fDemo").checked=false; const row=b.closest(".trow"); $("sMsg").textContent="Match choisi : "+(row?row.children[2].textContent:b.dataset.main)+" → clique ENREGISTRER"; }
@@ -1384,6 +1507,7 @@ function init(){
   setInterval(()=>{ if(!paused && Date.now()-lastSwitch>=cfg.rotateSeconds*1000) step(1); },500);
   setTimeout(subscribe,12000); setInterval(subscribe,cfg.subEveryMin*60000);
   setStatus();
+  initSubs();
   if(S.demo) startDemo(); else poll();
   if(qs.get("setup")==="1") openSettings();
 }
