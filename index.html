@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=1080">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wdth,wght@62..125,100..900&family=Barlow:wght@500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wdth,wght@62..125,100..900&family=Barlow:wght@500;600;700&family=Barlow+Condensed:wght@600;700;800&family=Manrope:wght@400..800&family=Sofia+Sans+Extra+Condensed:wght@500..900&display=swap" rel="stylesheet">
 <style>
 /* =====================================================================
    LA PANENKA — OVERLAY LIVE VERTICAL 1080 x 1920 (OBS)
@@ -274,7 +274,9 @@ body.preview #status{display:block}
 .sbox .linkrow{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}
 .sbox .linkrow input{font-size:16px;color:var(--cream)}
 .ghost{display:none}
-#bgLayer .dec-lfp{display:none}
+.cam-prism{display:none}
+#bgLayer .dec-lfp,#bgLayer .dec-ucl{display:none}
+html[data-skin] #bgLayer .dec-laliga{display:none}
 
 /* =====================================================================
    SKIN LFP — Ligue 1 / Ligue 2 (DA 2024 « Football. À la française »)
@@ -397,6 +399,106 @@ html[data-skin=lfp] .sbox input,html[data-skin=lfp] .sbox select{border-radius:0
 html[data-skin=lfp] .sbox button{border-radius:0;clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);padding-left:30px;padding-right:30px}
 html[data-skin=lfp] .sbox button.pri{background:var(--p1);color:var(--p1Txt)}
 html[data-skin=lfp] #todayBox{border-radius:0}
+
+/* =====================================================================
+   SKIN UCL — Ligue des champions (DA 2024-2027)
+   Nuit bleue (#000040), verre bleu nuit, bleu électrique #0232FF, cyan #00D9F7,
+   liseré prisme multicolore (la lumière qui court sur les bords des étoiles),
+   typo condensée en casse mixte façon Champions Display + Manrope (police du site UEFA).
+   Étincelles à 4 branches et arcs de dôme de stade : pas de starball, pas de logo.
+   ===================================================================== */
+html[data-skin=ucl]{
+  --cream:#dbdde9; --muted:rgba(255,255,255,.62); --line:rgba(255,255,255,.14); --tile:rgba(255,255,255,.07);
+  --anton:"Sofia Sans Extra Condensed","Arial Narrow",sans-serif; --cond:"Sofia Sans Extra Condensed","Arial Narrow",sans-serif; --ui:"Manrope",system-ui,sans-serif;
+  --prism:linear-gradient(90deg,#00d9f7 0%,#0232ff 30%,#7b3cff 54%,#ff4fd8 78%,#ff8a5c 100%);
+  --prismV:linear-gradient(180deg,#00d9f7 0%,#0232ff 30%,#7b3cff 54%,#ff4fd8 78%,#ff8a5c 100%);
+  --nameK:1.3;
+}
+html[data-skin=ucl] :is(.digits,.vs,#clock,.wm b,.sv,.pl b,.ev .m,.mc .s,.rc-s,#banner .b1,.tsc,.g-word,.g-scorer,.g-score,.sbox h2,.trow .tt){font-weight:900}
+html[data-skin=ucl] :is(.pill,#leagueName,.tname,#clock.long,.host b,.tk-txt b,#ltSub .s1,#tabTitle,.pl span,.ev .t,.var-ic,.mc .n,.rc-t span,#banner .b2,#banner .bcr,.tk-item,.g-team,.sbox label,.sbox button){font-weight:800}
+html[data-skin=ucl] :is(.over,#round,.scorers,.host span,.lt-r,.tk-txt small,.sl span,.lu-head small,.ev .t small,.mc .mm,.rc-ctx,#banner .b0,.g-meta,.tk-promo,.tmin,.empty){font-weight:600}
+/* Casse mixte, comme les titres UCL ("Real Madrid", "Mi-temps") */
+html[data-skin=ucl] :is(.pill,.tname,#leagueName,#tabTitle,.pl span,.ev .t,.mc .n,.rc-t span,#banner .bcr,.tk-item,.g-team,.g-scorer,#ltSub .s1,.tk-txt b,#banner .b2){text-transform:none;letter-spacing:.2px}
+
+/* Étiquettes : pilules en verre */
+html[data-skin=ucl] .pill{font-size:23px;padding:8px 18px}
+html[data-skin=ucl] .pill.dark{background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.24);color:#fff}
+html[data-skin=ucl] .pill.white{background:#fff;color:#00004b}
+html[data-skin=ucl] #livePill.red{background:var(--p2);color:var(--p2Txt)}
+html[data-skin=ucl] #clock{background:#fff;color:#00004b;font-size:40px;padding:6px 24px}
+html[data-skin=ucl] #clock.long{font-size:24px;padding:10px 18px}
+
+/* Panneaux : verre bleu nuit + liseré prisme */
+html[data-skin=ucl] .panel{border-radius:22px;background:var(--nav);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.12);transition:none}
+html[data-skin=ucl] .panel::before{height:4px;background:var(--prism)}
+html[data-skin=ucl] #score{background:var(--nav) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 290' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='.06' stroke-width='2'%3E%3Cellipse cx='500' cy='520' rx='250' ry='250'/%3E%3Cellipse cx='500' cy='520' rx='420' ry='360'/%3E%3Cellipse cx='500' cy='520' rx='600' ry='470'/%3E%3Cellipse cx='500' cy='520' rx='800' ry='590'/%3E%3Cpath d='M500 520L90 0M500 520L300 0M500 520L500 0M500 520L700 0M500 520L910 0'/%3E%3C/g%3E%3C/svg%3E") center/100% 100% no-repeat}
+html[data-skin=ucl] .lg{background:#fff}
+html[data-skin=ucl] #leagueName{font-size:26px}
+html[data-skin=ucl] .tname{letter-spacing:.3px}
+html[data-skin=ucl] .tname::after{border-radius:3px;height:4px;left:34%;right:34%}
+html[data-skin=ucl] .digits{font-size:172px;gap:18px}
+html[data-skin=ucl] .digit{min-width:84px}
+html[data-skin=ucl] .sep{font-size:96px;color:var(--p2);top:-8px}
+html[data-skin=ucl] .vs{font-size:136px;color:var(--p2)}
+html[data-skin=ucl] .scorers{font-size:17px}
+
+/* Webcam : cadre en verre au liseré prisme, deux reflets d'étoile */
+html[data-skin=ucl] .cam-border{display:none}
+html[data-skin=ucl] .cam-prism{display:block;position:absolute;left:-6px;top:-6px;width:1012px;height:672px;pointer-events:none;overflow:visible}
+html[data-skin=ucl] #goal.show ~ #cam .cam-prism rect{stroke:var(--gcol)}
+html[data-skin=ucl] .cam-ph{background:repeating-linear-gradient(45deg,#06065a 0 22px,#04044c 22px 44px)}
+
+/* Bandeau identité */
+html[data-skin=ucl] #ltId,html[data-skin=ucl] #ltToast{background:var(--nav);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.14)}
+html[data-skin=ucl] .wm{background:var(--p1);box-shadow:none}
+html[data-skin=ucl] .host b{font-size:36px}
+html[data-skin=ucl] .lt-r{color:var(--p2)}
+html[data-skin=ucl] #ltToast .tk-ic{background:rgba(255,255,255,.1)}
+html[data-skin=ucl] #ltSub{color:#00004b}
+html[data-skin=ucl] #ltSub .s2{color:#2a2f6e}
+html[data-skin=ucl] #ltSub .s1{font-size:36px}
+
+/* Panneau d'infos */
+html[data-skin=ucl] #tabTitle{font-size:38px}
+html[data-skin=ucl] .dots i.on{background:var(--prism)}
+html[data-skin=ucl] .prog i{background:var(--prism)}
+html[data-skin=ucl] .sv{font-size:42px}
+html[data-skin=ucl] .dbar>div{border-radius:4px}
+html[data-skin=ucl] .dbar i{border-radius:4px}
+html[data-skin=ucl] .pitch{background:#06065a repeating-linear-gradient(90deg,rgba(255,255,255,.035) 0 60px,transparent 60px 120px);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.16)}
+html[data-skin=ucl] .mk{border-color:rgba(255,255,255,.2)}
+html[data-skin=ucl] .pl b{font-size:19px}
+html[data-skin=ucl] .pl span{background:rgba(0,0,64,.86);font-size:17px}
+html[data-skin=ucl] .ev .m{font-size:34px}
+html[data-skin=ucl] .ev .t{font-size:25px}
+html[data-skin=ucl] .mc{background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1)}
+html[data-skin=ucl] .mc .n{font-size:21px}
+html[data-skin=ucl] .mc .s{font-size:36px}
+html[data-skin=ucl] .rc-s{font-size:176px}
+html[data-skin=ucl] .rc-t span{font-size:28px}
+html[data-skin=ucl] #banner{background:var(--nav)}
+html[data-skin=ucl] #banner::before{width:10px;background:var(--prismV)}
+html[data-skin=ucl] #banner .b1{font-size:128px}
+
+/* Bandeau défilant */
+html[data-skin=ucl] #ticker{background:var(--nav);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.14)}
+html[data-skin=ucl] #tkLabel{background:var(--p1);color:#fff}
+html[data-skin=ucl] .tk-item{font-size:25px}
+html[data-skin=ucl] .tsc{background:rgba(255,255,255,.1);font-size:30px}
+html[data-skin=ucl] .tmin{color:var(--p2)}
+
+/* BUT */
+html[data-skin=ucl] .g-word{font-size:250px;letter-spacing:3px}
+html[data-skin=ucl] .g-bot{background:var(--nav)}
+html[data-skin=ucl] .g-scorer{font-size:136px}
+html[data-skin=ucl] .g-top::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;background:var(--prism)}
+
+/* Fond */
+html[data-skin=ucl] #bgLayer .dec-ucl{display:inline}
+
+/* Réglages */
+html[data-skin=ucl] .sbox{background:var(--nav)}
+html[data-skin=ucl] .sbox button.pri{background:var(--p1);color:#fff}
 </style>
 </head>
 <body>
@@ -407,6 +509,8 @@ html[data-skin=lfp] #todayBox{border-radius:0}
       <clipPath id="holeClip"><path clip-rule="evenodd" d="M0 0H1080V1920H0Z M64 466H1016A24 24 0 0 1 1040 490V1102A24 24 0 0 1 1016 1126H64A24 24 0 0 1 40 1102V490A24 24 0 0 1 64 466Z"/></clipPath>
       <clipPath id="holeSharp"><path clip-rule="evenodd" d="M0 0H1080V1920H0Z M40 466H1040V1126H40Z"/></clipPath>
       <pattern id="lfpGrid" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M60 0H0V60" fill="none" stroke="#ffffff" stroke-opacity=".05" stroke-width="2"/></pattern>
+      <radialGradient id="uclGlow" cx="540" cy="-160" r="1100" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#0232ff" stop-opacity=".6"/><stop offset=".55" stop-color="#0232ff" stop-opacity=".12"/><stop offset="1" stop-color="#0232ff" stop-opacity="0"/></radialGradient>
+      <path id="spk" d="M0-10C1-2 2-1 10 0C2 1 1 2 0 10C-1 2-2 1-10 0C-2-1-1-2 0-10Z"/>
     </defs>
     <g class="holeg" clip-path="url(#holeClip)">
       <rect width="1080" height="1920" style="fill:var(--bg)"/>
@@ -429,6 +533,26 @@ html[data-skin=lfp] #todayBox{border-radius:0}
           <rect x="652" y="1660" width="16" height="260" style="fill:var(--p2)"/>
           <rect x="1350" y="1240" width="34" height="680" style="fill:var(--p1)"/>
         </g>
+      </g>
+      <!-- Skin UCL : lumière de stade, arcs du dôme, étincelles (4 branches, pas de starball) -->
+      <g class="dec-ucl">
+        <rect width="1080" height="1920" fill="url(#uclGlow)"/>
+        <g fill="none" stroke="#ffffff" stroke-opacity=".07" stroke-width="2">
+          <ellipse cx="540" cy="-300" rx="520" ry="460"/><ellipse cx="540" cy="-300" rx="720" ry="640"/>
+          <ellipse cx="540" cy="-300" rx="930" ry="830"/><ellipse cx="540" cy="-300" rx="1160" ry="1040"/>
+          <ellipse cx="540" cy="2260" rx="760" ry="560"/><ellipse cx="540" cy="2260" rx="980" ry="720"/>
+        </g>
+        <g fill="#ffffff">
+          <use href="#spk" transform="translate(92 62) scale(1.3)" opacity=".9"/><use href="#spk" transform="translate(262 112) scale(.6)" opacity=".55"/>
+          <use href="#spk" transform="translate(468 40) scale(.8)" opacity=".7"/><use href="#spk" transform="translate(704 96) scale(1.5)" opacity=".95"/>
+          <use href="#spk" transform="translate(884 48) scale(.7)" opacity=".6"/><use href="#spk" transform="translate(1012 124) scale(.9)" opacity=".8"/>
+          <use href="#spk" transform="translate(20 700) scale(.7)" opacity=".7"/><use href="#spk" transform="translate(18 1300) scale(.9)" opacity=".8"/>
+          <use href="#spk" transform="translate(1060 1000) scale(.6)" opacity=".6"/><use href="#spk" transform="translate(1062 1450) scale(1)" opacity=".85"/>
+          <use href="#spk" transform="translate(150 1800) scale(1)" opacity=".8"/><use href="#spk" transform="translate(420 1872) scale(.6)" opacity=".55"/>
+          <use href="#spk" transform="translate(980 1858) scale(.7)" opacity=".7"/>
+        </g>
+        <use href="#spk" transform="translate(1058 620) scale(.9)" fill="#00d9f7"/><use href="#spk" transform="translate(24 1585) scale(.7)" fill="#ff4fd8"/>
+        <use href="#spk" transform="translate(760 1782) scale(1.3)" fill="#00d9f7"/>
       </g>
     </g>
   </svg>
@@ -469,6 +593,13 @@ html[data-skin=lfp] #todayBox{border-radius:0}
   <section id="cam">
     <div class="cam-ph"><div style="font-size:70px">📷</div>Ta webcam ici<span>1000 × 660 px · X 40 · Y 466</span></div>
     <div class="cam-border"></div>
+    <svg class="cam-prism" viewBox="0 0 1012 672" aria-hidden="true">
+      <defs><linearGradient id="camPrism" x1="0" y1="0" x2="1012" y2="672" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#00d9f7"/><stop offset=".3" stop-color="#0232ff"/><stop offset=".55" stop-color="#7b3cff"/><stop offset=".8" stop-color="#ff4fd8"/><stop offset="1" stop-color="#ff8a5c"/></linearGradient></defs>
+      <rect x="3" y="3" width="1006" height="666" rx="27" fill="none" stroke="url(#camPrism)" stroke-width="5"/>
+      <use href="#spk" transform="translate(986 26) scale(1.6)" fill="#ffffff"/>
+      <use href="#spk" transform="translate(26 646) scale(1.1)" fill="#ffffff" opacity=".85"/>
+    </svg>
   </section>
 
   <!-- ===== BANDEAU IDENTITÉ / NOTIFS / ABONNE-TOI ===== -->
@@ -583,7 +714,9 @@ const CONFIG = {
 /* Thèmes du système de DA Lapanenka (tokens.json) */
 const THEMES = {
   default:   {label:"Default (jaune/orange)",   nav:"#0b1838",navm:"#22448e",navd:"#060d24",acc:"#ffd21e",acc2:"#ffa51f",red:"#e5243b"},
-  ldc:       {label:"Ligue des Champions",      nav:"#07102e",navm:"#152a6e",navd:"#040815",acc:"#eaf0ff",acc2:"#7fa8ff",red:"#1f3fae"},
+  // Ligue des champions : skin "ucl" (DA 2024-2027 : nuit bleue, bleu électrique, cyan, liseré prisme)
+  ldc:       {label:"Ligue des champions (nuit européenne)", skin:"ucl", textCase:"mixed", p1:"#0232ff", p2:"#00d9f7",
+              nav:"#0a0a61",navm:"#14147a",navd:"#000040",acc:"#00d9f7",acc2:"#0232ff",red:"#0232ff",bg:"#000040"},
   europa:    {label:"Europa League",            nav:"#1a0f05",navm:"#3a1e05",navd:"#0a0603",acc:"#ff7a1a",acc2:"#ff9f40",red:"#ff5500"},
   conference:{label:"Conference League",        nav:"#06140f",navm:"#0e3b2a",navd:"#030a07",acc:"#00ff85",acc2:"#5cffb0",red:"#00c46a"},
   psg:       {label:"PSG",                      nav:"#0a1a4a",navm:"#1c2f7a",navd:"#050d26",acc:"#e30613",acc2:"#ff4d57",red:"#e30613"},
@@ -647,9 +780,17 @@ const S = { fx:null, ticker:[], seen:new Set(), shown:{home:0,away:0}, remaining
 /* ---------- Noms ---------- */
 const DISPLAY = {"Paris Saint Germain":"PARIS SG","Bayern München":"BAYERN","Bayern Munich":"BAYERN","Borussia Dortmund":"DORTMUND","Manchester City":"MAN CITY","Manchester United":"MAN UNITED","Atletico Madrid":"ATLÉTICO","Olympique Lyonnais":"LYON","Bayer Leverkusen":"LEVERKUSEN","RB Leipzig":"LEIPZIG","Club Brugge KV":"FC BRUGES","Bodo/Glimt":"BODØ/GLIMT","Stade Brestois 29":"BREST","Fenerbahce":"FENERBAHÇE","Shakhtar Donetsk":"SHAKHTAR","AEK Athens FC":"AEK ATHÈNES"};
 const SHORT = {"Paris Saint Germain":"PSG","Manchester City":"Man City","Manchester United":"Man Utd","Real Madrid":"Real","Atletico Madrid":"Atlético","Bayern München":"Bayern","Borussia Dortmund":"Dortmund","Olympique Lyonnais":"Lyon","Marseille":"OM","Bayer Leverkusen":"Leverkusen","Tottenham":"Spurs","Barcelona":"Barça","Juventus":"Juve","Fenerbahce":"Fenerbahçe","Shakhtar Donetsk":"Shakhtar","AEK Athens FC":"AEK","Bodo/Glimt":"Bodø"};
-const disp = n => (DISPLAY[n] || n || "").toUpperCase();
+/* Version casse mixte (thèmes qui écrivent "Real Madrid" plutôt que "REAL MADRID", ex. Ligue des champions) */
+const DISPLAY_MIX = {"Paris Saint Germain":"Paris SG","Bayern München":"Bayern","Bayern Munich":"Bayern","Borussia Dortmund":"Dortmund","Manchester City":"Man City","Manchester United":"Man United","Atletico Madrid":"Atlético","Olympique Lyonnais":"Lyon","Bayer Leverkusen":"Leverkusen","RB Leipzig":"Leipzig","Club Brugge KV":"FC Bruges","Bodo/Glimt":"Bodø/Glimt","Stade Brestois 29":"Brest","Fenerbahce":"Fenerbahçe","Shakhtar Donetsk":"Shakhtar","AEK Athens FC":"AEK Athènes"};
+const mixedCase = () => document.documentElement.dataset.case==="mixed";
+const disp = n => mixedCase() ? (DISPLAY_MIX[n] || n || "") : (DISPLAY[n] || n || "").toUpperCase();
 const shortT = n => { const s = SHORT[n] || n || ""; return s.length>13 ? s.slice(0,12)+"." : s; };
-function fitName(el,txt){ if(el.textContent===txt) return; el.textContent=txt; const L=txt.length; el.style.fontSize=(L<=9?34:L<=12?29:L<=15?25:21)+"px"; }
+function fitName(el,txt){
+  const k=parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--nameK"))||1;   // les typos très condensées peuvent écrire plus gros
+  if(el.textContent===txt && el.dataset.k===String(k)) return;
+  el.textContent=txt; el.dataset.k=String(k);
+  const L=txt.length; el.style.fontSize=Math.round((L<=9?34:L<=12?29:L<=15?25:21)*k)+"px";
+}
 function pName(n){
   if(!n) return "";
   const t = n.replace(/\b[A-ZÀ-Ý]\.\s*/g,"").trim().split(/\s+/).filter(Boolean);
@@ -688,13 +829,14 @@ function applyTheme(name){
   const bgl=document.getElementById("bgLayer"); if(bgl) bgl.classList.toggle("on",!!t.bg);
   // Skin : change formes, typo et motifs (pas seulement les couleurs)
   if(t.skin) root.dataset.skin=t.skin; else delete root.dataset.skin;
+  if(t.textCase) root.dataset.case=t.textCase; else delete root.dataset.case;
   root.dataset.theme=name;
   const p1=t.p1||t.acc, p2=t.p2||t.acc2;
   [["--p1",p1],["--p2",p2],["--p1Txt",txtOn(p1,"#262624")],["--p2Txt",txtOn(p2,"#262624")]].forEach(([k,v])=>root.style.setProperty(k,v));
   const gn=document.getElementById("ghostNum"); if(gn) gn.textContent=t.num||"";
   root.style.setProperty("--accTxt",txtOn(t.acc,t.nav));
   root.style.setProperty("--redTxt",txtOn(t.red,t.nav));
-  teamSig=""; if(S.fx) setTeamColors(S.fx);
+  teamSig=""; if(S.fx){ setTeamColors(S.fx); renderScore(S.fx); renderResult(S.fx); }
   return true;
 }
 function refreshTheme(){ applyTheme(manualTheme || autoTheme(S.fx)); }
