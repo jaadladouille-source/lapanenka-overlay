@@ -702,9 +702,10 @@ html[data-skin=ucl] .sg-bar i{background:var(--prism)}
       <div><label>IDs multiplex (tirets) — vide = auto</label><input id="fTick" placeholder="ex : 111-222-333"></div>
     </div>
     <div class="g2"><div><label>Équipe suivie (ID) — utilisée si l'ID du match est vide</label><input id="fTeam" placeholder="541 = Real Madrid"></div><div></div></div>
-    <div class="g2">
-      <div><label>Mes abonnés TikTok maintenant</label><input id="fSubs" type="number" min="0" placeholder="ex : 2860 (vide = pas de barre)"></div>
+    <div class="g3">
+      <div><label>Abonnés (secours)</label><input id="fSubs" type="number" min="0" placeholder="ex : 2860"></div>
       <div><label>Objectif final</label><input id="fSubGoal" type="number" min="100" placeholder="10000"></div>
+      <div><label>Clé Euler Stream</label><input id="fEuler" type="password" placeholder="abonnés en direct"></div>
     </div>
     <label>Trouver un match du jour</label>
     <div class="g2"><input id="fSearch" placeholder="Filtrer : équipe ou compétition…"><button id="bToday">Matchs du jour (1 requête)</button></div>
@@ -752,6 +753,8 @@ const CONFIG = {
   logo: "",                  // vide = logo intégré. Sinon nom d'un fichier PNG à côté de l'overlay.
   subs: "",                  // abonnés TikTok au début du live (vide = pas de barre d'objectif)
   subGoal: 10000,            // objectif final affiché à côté de la barre
+  eulerKey: "",              // clé Euler Stream : nombre d'abonnés exact et en direct pendant le live
+  tiktok: "",                // pseudo TikTok à écouter (vide = le pseudo ci-dessus, sans @)
   promos: ["Suis @lapanenka.fr sur TikTok et Instagram"]
 };
 
@@ -788,7 +791,7 @@ let saved = {};
 try { saved = JSON.parse(localStorage.getItem(LS_KEY) || "{}") || {}; } catch(e) {}
 const qs = new URLSearchParams(location.search);
 const cfg = Object.assign({}, CONFIG, saved);
-const QMAP = {key:"apiKey",fixture:"fixtureId",team:"teamId",ticker:"tickerIds",poll:"pollSeconds",rotate:"rotateSeconds",theme:"theme",name:"hostName",handle:"handle",logo:"logo",sub:"subEveryMin",subs:"subs",subgoal:"subGoal"};
+const QMAP = {key:"apiKey",fixture:"fixtureId",team:"teamId",ticker:"tickerIds",poll:"pollSeconds",rotate:"rotateSeconds",theme:"theme",name:"hostName",handle:"handle",logo:"logo",sub:"subEveryMin",subs:"subs",subgoal:"subGoal",euler:"eulerKey",tiktok:"tiktok"};
 qs.forEach((v,k)=>{ if(QMAP[k]) cfg[QMAP[k]] = v; });
 cfg.pollSeconds = Math.max(15, Number(cfg.pollSeconds) || 100);
 cfg.rotateSeconds = Math.max(6, Number(cfg.rotateSeconds) || 14);
@@ -1173,27 +1176,33 @@ function runLT(){
 function subscribe(){ subPending=true; runLT(); }
 
 /* ---------- Objectif abonnés ----------
-   Départ : le nombre saisi dans les réglages (?subs=2860).
-   En direct : +1 à chaque nouvel abonné reçu de TikFinity (appli gratuite, ws://127.0.0.1:21213).
+   Source 1 (recommandée) : Euler Stream (?euler=CLÉ). Dès que le live démarre, on reçoit le VRAI
+   nombre total d'abonnés (roomInfo.user.followers), puis le nouveau total à chaque abonnement
+   (WebcastSocialMessage "pm_main_follow_message…", champ followCount).
+   Source 2 : TikFinity sur Windows (ws://127.0.0.1:21213), +1 par abonnement.
+   Secours : le nombre saisi dans les réglages (?subs=2860), affiché tant que le live n'a pas commencé.
    Petit palier tous les 100 (bandeau), grosse animation + confettis tous les 1000 et à l'objectif final. */
-const SUBS = { base:0, n:0, goal:10000, step:100, big:1000, seen:new Set(), ws:null };
+const SUBS = { base:0, n:0, goal:10000, step:100, big:1000, seen:new Set(), ws:null, live:false };
 const SUBS_LS = "lapanenka_subs_v1";
 const fmtN = v => String(Math.round(v)).replace(/\B(?=(\d{3})+(?!\d))/g," ");
+const tiktokUser = () => String(cfg.tiktok||cfg.handle||"").trim().replace(/^@/,"");
 function initSubs(){
   SUBS.base = Math.max(0, parseInt(cfg.subs,10)||0);
   if(!SUBS.base && S.demo) SUBS.base = 2860;              // aperçu en mode démo
   SUBS.goal = Math.max(100, parseInt(cfg.subGoal,10)||10000);
   SUBS.n = SUBS.base;
-  // si l'overlay se recharge pendant le live, on garde les abonnés gagnés depuis le début
-  try{ const s=JSON.parse(localStorage.getItem(SUBS_LS)||"null"); if(s && s.base===SUBS.base && Date.now()-s.at<12*3600e3 && s.n>SUBS.n) SUBS.n=s.n; }catch(e){}
+  // sans source automatique : si l'overlay se recharge pendant le live, on garde les abonnés gagnés
+  if(!cfg.eulerKey){ try{ const s=JSON.parse(localStorage.getItem(SUBS_LS)||"null"); if(s && s.base===SUBS.base && Date.now()-s.at<12*3600e3 && s.n>SUBS.n) SUBS.n=s.n; }catch(e){} }
   renderSubs();
-  if(SUBS.base && !S.demo) connectTikfinity();
+  if(S.demo) return;
+  if(cfg.eulerKey && tiktokUser()) connectEuler();
+  else if(SUBS.base) connectTikfinity();
 }
 function saveSubs(){ try{ localStorage.setItem(SUBS_LS,JSON.stringify({base:SUBS.base,n:SUBS.n,at:Date.now()})); }catch(e){} }
 function nextCap(n){ return (Math.floor(n/SUBS.step)+1)*SUBS.step; }
 function renderSubs(pop){
-  const box=$("subGoal"); box.classList.toggle("on",!!SUBS.base);
-  if(!SUBS.base) return;
+  const on=SUBS.n>0, box=$("subGoal"); box.classList.toggle("on",on);
+  if(!on) return;
   const n=SUBS.n, next=nextCap(n), prev=next-SUBS.step;
   $("sgNow").textContent=fmtN(n);
   $("sgNext").textContent="/ "+fmtN(next)+" abonnés";
@@ -1202,16 +1211,57 @@ function renderSubs(pop){
   $("subHandle").textContent="Plus que "+fmtN(next-n)+" avant "+fmtN(next)+" · "+(cfg.handle||"");
   if(pop){ box.classList.remove("pop"); void box.offsetWidth; box.classList.add("pop"); }
 }
-function addFollowers(k,who,test){
-  if(!SUBS.base) return;
-  const old=SUBS.n; SUBS.n=Math.max(0,old+k); if(!test) saveSubs(); renderSubs(k>0);
-  if(k<=0) return;
-  const caps=[]; for(let m=nextCap(old); m<=SUBS.n; m+=SUBS.step) caps.push(m);
-  if(who && !caps.length) toast({kind:"follow",icon:ICON.follow,pill:"yellow",tag:"Nouvel abonné",title:who,sub:"Plus que "+fmtN(nextCap(SUBS.n)-SUBS.n)+" avant "+fmtN(nextCap(SUBS.n))});
-  caps.forEach(m=>{
+/* Fêter les caps franchis entre old et n */
+function celebrate(old,n,who){
+  const caps=[]; for(let m=nextCap(old); m<=n; m+=SUBS.step) caps.push(m);
+  if(who && !caps.length) toast({kind:"follow",icon:ICON.follow,pill:"yellow",tag:"Nouvel abonné",title:who,sub:"Plus que "+fmtN(nextCap(n)-n)+" avant "+fmtN(nextCap(n))});
+  caps.slice(-3).forEach(m=>{
     if(m%SUBS.big===0 || m===SUBS.goal) mileFx(m);
     else toast({icon:"🎉",pill:"yellow",tag:"Cap franchi",title:fmtN(m)+" abonnés",sub:"Merci ! Prochain cap : "+fmtN(m+SUBS.step)});
   });
+}
+/* +k abonnés (TikFinity, touches de test) */
+function addFollowers(k,who,test){
+  if(!SUBS.n) return;
+  const old=SUBS.n; SUBS.n=Math.max(0,old+k); if(!test) saveSubs(); renderSubs(k>0);
+  if(k>0) celebrate(old,SUBS.n,who);
+}
+/* Nouveau total exact (Euler Stream). quiet = synchronisation au début du live, sans fête. */
+function setFollowers(total,who,quiet){
+  total=Math.round(Number(total)); if(!(total>0)) return;
+  const old=SUBS.n; SUBS.n=total; renderSubs(total>old);
+  if(!quiet && old && total>old) celebrate(old,total,who);
+  else if(!quiet && who) celebrate(total,total,who);
+}
+function connectEuler(){
+  const url="wss://ws.eulerstream.com?uniqueId="+encodeURIComponent(tiktokUser())+"&apiKey="+encodeURIComponent(cfg.eulerKey);
+  let ws; try{ ws=new WebSocket(url); }catch(e){ setTimeout(connectEuler,60000); return; }
+  SUBS.ws=ws; let synced=false;
+  ws.onmessage=e=>{
+    if(typeof e.data!=="string") return;
+    let j; try{ j=JSON.parse(e.data); }catch(x){ return; }
+    (j.messages||[]).forEach(m=>{
+      const d=m&&m.data||{};
+      if(m.type==="roomInfo"){ const f=d.user&&d.user.followers; if(f>0){ setFollowers(f,"",true); synced=true; SUBS.live=true; } }
+      else if(m.type==="WebcastSocialMessage"){
+        const dt=String(d.common&&d.common.displayText&&d.common.displayText.displayType||"");
+        if(!/follow/i.test(dt) && String(d.action)!=="1") return;
+        const u=d.user||{}, id=u.userId||u.uniqueId; if(id){ if(SUBS.seen.has(id)) return; SUBS.seen.add(id); }
+        const who=u.nickname||u.uniqueId||"";
+        if(Number(d.followCount)>0) setFollowers(d.followCount,who,!synced&&!SUBS.n);
+        else addFollowers(1,who);
+        synced=true;
+      }
+    });
+  };
+  ws.onclose=e=>{
+    SUBS.ws=null; SUBS.live=false;
+    // 4404 = pas encore en live : on réessaie chaque minute. 4400/4401/4403 = clé ou pseudo invalide : on arrête.
+    const c=e.code; if([4400,4401,4403].includes(c)){ console.warn("Euler Stream : "+(e.reason||c)); return; }
+    if(!LIVE && (c===4404||c===4005)) return;   // aperçu Safari : pas de nouvelles tentatives (quota gratuit : 1 500 connexions/jour)
+    setTimeout(connectEuler, c===4429?120000 : (c===4404||c===4005)?60000 : 10000);
+  };
+  ws.onerror=()=>{ try{ ws.close(); }catch(x){} };
 }
 function connectTikfinity(){
   let ws; try{ ws=new WebSocket("ws://127.0.0.1:21213/"); }catch(e){ setTimeout(connectTikfinity,20000); return; }
@@ -1417,7 +1467,7 @@ function openSettings(){
   $("fTheme").innerHTML='<option value="auto">Auto (club / compétition)</option>'+THEME_ORDER.map(k=>'<option value="'+k+'">'+THEMES[k].label+'</option>').join("");
   $("fTheme").value=cfg.theme||"auto";
   $("fHost").value=cfg.hostName; $("fHandle").value=cfg.handle; $("fDemo").checked=!!cfg.demo;
-  $("fSubs").value=cfg.subs||""; $("fSubGoal").value=cfg.subGoal||10000;
+  $("fSubs").value=cfg.subs||""; $("fSubGoal").value=cfg.subGoal||10000; $("fEuler").value=cfg.eulerKey||"";
   $("sMsg").textContent = S.remaining!=null ? "Requêtes API restantes aujourd'hui : "+S.remaining : "";
   $("settings").classList.add("on");
   updateLink();
@@ -1431,8 +1481,11 @@ function tiktokLink(forTikTok=true){
   if(tk) p.set("ticker",tk);
   if(th && th!=="auto") p.set("theme",th);
   const sb=$("fSubs").value.trim(), sg=$("fSubGoal").value.trim();
+  const eu=$("fEuler").value.trim();
   if(sb) p.set("subs",sb);
-  if(sb && sg && sg!=="10000") p.set("subgoal",sg);
+  if(sg && sg!=="10000") p.set("subgoal",sg);
+  if(eu) p.set("euler",eu);
+  if(cfg.tiktok) p.set("tiktok",cfg.tiktok);
   if(forTikTok) p.set("live","1");   // dans TikTok : pas d'aide à l'écran, zone webcam transparente
   const q=p.toString();
   return location.origin+location.pathname+(q?"?"+q:"");
@@ -1445,7 +1498,7 @@ function copyLink(){
 }
 const closeSettings=()=>$("settings").classList.remove("on");
 function saveSettings(){
-  const o=Object.assign({},saved,{apiKey:$("fKey").value.trim(),fixtureId:$("fFix").value.trim(),tickerIds:$("fTick").value.trim(),teamId:$("fTeam").value.trim(),pollSeconds:Number($("fPoll").value)||100,rotateSeconds:Number($("fRot").value)||14,subEveryMin:Number($("fSub").value)||4,theme:$("fTheme").value,hostName:$("fHost").value.trim()||"ERWANE",handle:$("fHandle").value.trim()||"@lapanenka.fr",demo:$("fDemo").checked,subs:$("fSubs").value.trim(),subGoal:Number($("fSubGoal").value)||10000});
+  const o=Object.assign({},saved,{apiKey:$("fKey").value.trim(),fixtureId:$("fFix").value.trim(),tickerIds:$("fTick").value.trim(),teamId:$("fTeam").value.trim(),pollSeconds:Number($("fPoll").value)||100,rotateSeconds:Number($("fRot").value)||14,subEveryMin:Number($("fSub").value)||4,theme:$("fTheme").value,hostName:$("fHost").value.trim()||"ERWANE",handle:$("fHandle").value.trim()||"@lapanenka.fr",demo:$("fDemo").checked,subs:$("fSubs").value.trim(),subGoal:Number($("fSubGoal").value)||10000,eulerKey:$("fEuler").value.trim()});
   try{ localStorage.setItem(LS_KEY,JSON.stringify(o)); }catch(e){}
   // On recharge sur le lien complet : les paramètres de l'adresse ne peuvent plus écraser le nouveau match
   location.href=tiktokLink(false);
@@ -1478,7 +1531,7 @@ addEventListener("keydown",e=>{
   else if(k==="g" && S.fx){ const gl=goalsOf(S.fx,"home"); goalFx("home",gl[gl.length-1]||null,S.fx); }
   else if(k==="b" && S.fx) banner("Coup d'envoi","",S.fx);
   else if(k==="f") addFollowers(1,"Test abonné",true);                                  // test : +1 abonné (non enregistré)
-  else if(k==="k" && SUBS.base){ SUBS.n=(Math.floor(SUBS.n/SUBS.big)+1)*SUBS.big-1; addFollowers(1,"",true); }   // test : palier des 1000
+  else if(k==="k" && SUBS.n){ SUBS.n=(Math.floor(SUBS.n/SUBS.big)+1)*SUBS.big-1; addFollowers(1,"",true); }   // test : palier des 1000
   else if(k==="arrowright") step(1);
   else if(k==="arrowleft") step(-1);
   else if(k==="p"){ paused=!paused; showTab(curTab); }
@@ -1496,7 +1549,7 @@ function init(){
   document.querySelectorAll("img.logo").forEach(img=>{ img.onerror=()=>img.parentNode.classList.add("nologo"); img.src=src; });
   if(!src) document.querySelectorAll(".wm").forEach(w=>w.classList.add("nologo"));
   $("bSave").onclick=saveSettings; $("bClose").onclick=closeSettings; $("bToday").onclick=loadToday; $("bCopy").onclick=copyLink;
-  ["fKey","fFix","fTick","fTeam","fTheme","fSubs","fSubGoal"].forEach(id=>{ $(id).addEventListener("input",updateLink); $(id).addEventListener("change",updateLink); });
+  ["fKey","fFix","fTick","fTeam","fTheme","fSubs","fSubGoal","fEuler"].forEach(id=>{ $(id).addEventListener("input",updateLink); $(id).addEventListener("change",updateLink); });
   $("fSearch").oninput=()=>{ if(S.today.length) listToday(); };
   $("todayBox").onclick=e=>{ const b=e.target.closest("button"); if(!b) return;
     if(b.dataset.main){ $("fFix").value=b.dataset.main; $("fDemo").checked=false; const row=b.closest(".trow"); $("sMsg").textContent="Match choisi : "+(row?row.children[2].textContent:b.dataset.main)+" → clique ENREGISTRER"; }
