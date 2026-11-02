@@ -250,6 +250,7 @@ body.preview .hint{display:block}
 #status{position:absolute;right:40px;top:1730px;font:600 16px/1 var(--ui);padding:8px 14px;border-radius:999px;background:rgba(0,0,0,.6);display:none;max-width:1000px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #status.err{display:block;background:#a3001b}
 body.preview #status{display:block}
+body.live #status,body.live .hint,body.live .cam-ph{display:none!important}
 #settings{position:absolute;inset:0;background:rgba(0,0,0,.82);display:none;z-index:100;align-items:flex-start;justify-content:center;padding-top:100px}
 #settings.on{display:flex}
 .sbox{width:960px;border-radius:24px;padding:32px 36px;background:var(--nav);box-shadow:inset 0 0 0 2px var(--line)}
@@ -752,6 +753,10 @@ cfg.subEveryMin = Math.max(1, Number(cfg.subEveryMin) || 4);
 if(!Array.isArray(cfg.promos)) cfg.promos = CONFIG.promos;
 if(cfg.theme!=="auto" && !THEMES[cfg.theme]) cfg.theme="auto";
 const IS_OBS = !!window.obsstudio;
+/* Mode live (?live=1, ou OBS) : pas d'aide, pas de ligne API, zone webcam transparente,
+   fond opaque partout sauf dans le trou de la webcam -> la caméra placée SOUS l'overlay
+   prend la forme exacte du cadre (coins arrondis compris), sans recadrage au pixel près. */
+const LIVE = IS_OBS || qs.get("live")==="1";
 const DEMO = qs.get("demo")==="1" || !!cfg.demo || !cfg.apiKey || (!cfg.fixtureId && !cfg.teamId);
 
 /* ---------- Outils ---------- */
@@ -825,8 +830,9 @@ function applyTheme(name){
   if(!THEMES[name]) name="default";
   if(name===themeName) return false;
   themeName=name; const t=THEMES[name];
-  [["--nav",t.nav],["--navm",t.navm],["--navd",t.navd],["--acc",t.acc],["--acc2",t.acc2],["--red",t.red],["--ovd",t.navd],["--bg",t.bg||"transparent"],["--decor",t.decor||"transparent"]].forEach(([k,v])=>root.style.setProperty(k,v));
-  const bgl=document.getElementById("bgLayer"); if(bgl) bgl.classList.toggle("on",!!t.bg);
+  [["--nav",t.nav],["--navm",t.navm],["--navd",t.navd],["--acc",t.acc],["--acc2",t.acc2],["--red",t.red],["--ovd",t.navd],["--bg",t.bg||(LIVE?t.navd:"transparent")],["--decor",t.decor||"transparent"]].forEach(([k,v])=>root.style.setProperty(k,v));
+  // En live, tous les thèmes ont un fond opaque percé à l'endroit de la webcam
+  const bgl=document.getElementById("bgLayer"); if(bgl) bgl.classList.toggle("on",!!t.bg || LIVE);
   // Skin : change formes, typo et motifs (pas seulement les couleurs)
   if(t.skin) root.dataset.skin=t.skin; else delete root.dataset.skin;
   if(t.textCase) root.dataset.case=t.textCase; else delete root.dataset.case;
@@ -1299,13 +1305,14 @@ function openSettings(){
   updateLink();
 }
 /* Lien complet (clé + match + thème) : c'est ce lien qu'on colle dans TikTok Studio */
-function tiktokLink(){
+function tiktokLink(forTikTok=true){
   const p=new URLSearchParams();
   const k=$("fKey").value.trim(), fx=$("fFix").value.trim(), tk=$("fTick").value.trim(), th=$("fTheme").value;
   if(k) p.set("key",k);
   if(fx) p.set("fixture",fx); else { const tm=$("fTeam").value.trim(); if(tm) p.set("team",tm); }
   if(tk) p.set("ticker",tk);
   if(th && th!=="auto") p.set("theme",th);
+  if(forTikTok) p.set("live","1");   // dans TikTok : pas d'aide à l'écran, zone webcam transparente
   const q=p.toString();
   return location.origin+location.pathname+(q?"?"+q:"");
 }
@@ -1320,7 +1327,7 @@ function saveSettings(){
   const o=Object.assign({},saved,{apiKey:$("fKey").value.trim(),fixtureId:$("fFix").value.trim(),tickerIds:$("fTick").value.trim(),teamId:$("fTeam").value.trim(),pollSeconds:Number($("fPoll").value)||100,rotateSeconds:Number($("fRot").value)||14,subEveryMin:Number($("fSub").value)||4,theme:$("fTheme").value,hostName:$("fHost").value.trim()||"ERWANE",handle:$("fHandle").value.trim()||"@lapanenka.fr",demo:$("fDemo").checked});
   try{ localStorage.setItem(LS_KEY,JSON.stringify(o)); }catch(e){}
   // On recharge sur le lien complet : les paramètres de l'adresse ne peuvent plus écraser le nouveau match
-  location.href=tiktokLink();
+  location.href=tiktokLink(false);
 }
 async function loadToday(){
   const key=$("fKey").value.trim(); if(!key){ $("sMsg").textContent="Entre d'abord ta clé API."; return; }
@@ -1357,7 +1364,7 @@ addEventListener("keydown",e=>{
 
 /* ---------- Démarrage ---------- */
 function init(){
-  if(!IS_OBS) document.body.classList.add("preview","ph");
+  if(LIVE) document.body.classList.add("live"); else document.body.classList.add("preview","ph");
   fit(); addEventListener("resize",fit);
   applyTheme(manualTheme || "default");
   $("hostName").textContent=(cfg.hostName||"").toUpperCase();
