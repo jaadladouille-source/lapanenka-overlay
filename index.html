@@ -75,6 +75,9 @@ body.preview{background:#05070d}
 .crest{width:96px;height:96px;display:grid;place-items:center}
 /* Logo toujours contenu dans sa boîte, quel que soit son format (ex. logo de Reims, très haut) */
 .crest img{width:100%;height:100%;min-width:0;min-height:0;object-fit:contain}
+/* Tant qu'aucun logo n'est chargé (pas encore de match, API indisponible) : rien d'affiché, pas de cadre vide */
+img:not([src]),img[src=""]{visibility:hidden}
+.lg:has(img:not([src])),.lg:has(img[src=""]){visibility:hidden}
 .tname{font:800 34px/1 var(--cond);letter-spacing:.4px;text-transform:uppercase;text-align:center;white-space:nowrap;max-width:310px;overflow:hidden;text-overflow:ellipsis;position:relative;padding-bottom:9px}
 .tname::after{content:"";position:absolute;left:30%;right:30%;bottom:0;height:4px;background:var(--home)}
 .team.away .tname::after{background:var(--away)}
