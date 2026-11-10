@@ -767,8 +767,8 @@ html[data-skin=unl] #leagueName{font-size:21px}
 html[data-skin=unl] #round{color:var(--uY);font-weight:600}
 /* Écusson posé sur un losange à la couleur de l'équipe (le module « drapeau ») */
 html[data-skin=unl] .crest{position:relative;width:118px;height:118px}
-html[data-skin=unl] .crest::before{content:"";position:absolute;inset:16px;transform:rotate(45deg);border-radius:8px;background:rgba(255,255,255,.09);box-shadow:inset 0 0 0 4px color-mix(in srgb,var(--home) 72%,#fff);animation:unBreath 5s ease-in-out infinite}
-html[data-skin=unl] .team.away .crest::before{box-shadow:inset 0 0 0 4px color-mix(in srgb,var(--away) 72%,#fff);animation-delay:-2.5s}
+html[data-skin=unl] .crest::before{content:"";position:absolute;inset:16px;transform:rotate(45deg);border-radius:8px;background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 3px rgba(255,255,255,.22);animation:unBreath 5s ease-in-out infinite}
+html[data-skin=unl] .team.away .crest::before{animation-delay:-2.5s}
 @keyframes unBreath{0%,100%{transform:rotate(45deg) scale(.94)}50%{transform:rotate(45deg) scale(1.04)}}
 html[data-skin=unl] .crest img{position:relative;max-width:88px;max-height:88px}
 html[data-skin=unl] .tname{font-size:30px;padding-bottom:12px}
@@ -1436,6 +1436,7 @@ function setTeamColors(f){
   const t=THEMES[themeName]||THEMES.default;
   if(!h || lum(h)<0.035) h=t.acc;
   if(!a || lum(a)<0.035) a="#ffffff";
+  if(t.skin==="unl"){ const lift=c=>{ const v=hexRgb(c); return lum(c)<0.12 ? "#"+v.map(x=>Math.round(x+(255-x)*0.38).toString(16).padStart(2,"0")).join("") : c; }; h=lift(h); a=lift(a); }
   if(dist(h,a)<90) a = lum(h)>0.6 ? t.acc2 : "#ffffff";
   if(dist(h,a)<90) a = "#8a93a8";
   const sig=h+a; if(sig===teamSig) return; teamSig=sig;
@@ -1948,13 +1949,13 @@ function setStatus(){
 function startDemo(){
   const T=id=>"https://media.api-sports.io/football/teams/"+id+".png";
   // La démo prend la compétition du thème choisi (ex. ?demo=1&theme=laliga → Séville - Real Madrid en LaLiga)
-  const DL={laliga:[140,"La Liga","Regular Season - 12",{id:536,name:"Sevilla",c:"ffffff"}],ligue1:[61,"Ligue 1","Regular Season - 12",{id:85,name:"Paris Saint Germain",c:"0a1a4a"}],ligue2:[62,"Ligue 2","Regular Season - 14",{id:1063,name:"Saint Etienne",c:"009a44"}],europa:[3,"UEFA Europa League","League Stage - 4",null],conference:[848,"UEFA Europa Conference League","League Stage - 3",null],nations:[5,"UEFA Nations League","League A - 5",{id:2,name:"France",c:"1d3a8a"},{id:9,name:"Spain"}]}[manualTheme]||[2,"UEFA Champions League","League Stage - 4",null];
+  const DL={laliga:[140,"La Liga","Regular Season - 12",{id:536,name:"Sevilla",c:"ffffff"}],ligue1:[61,"Ligue 1","Regular Season - 12",{id:85,name:"Paris Saint Germain",c:"0a1a4a"}],ligue2:[62,"Ligue 2","Regular Season - 14",{id:1063,name:"Saint Etienne",c:"009a44"}],europa:[3,"UEFA Europa League","League Stage - 4",null],conference:[848,"UEFA Europa Conference League","League Stage - 3",null],nations:[5,"UEFA Nations League","League A - 5",{id:2,name:"France",c:"1d3a8a"},{id:9,name:"Spain",c:"c60b1e"}]}[manualTheme]||[2,"UEFA Champions League","League Stage - 4",null];
   const H=DL[3]?{id:DL[3].id,name:DL[3].name,logo:T(DL[3].id)}:{id:497,name:"AS Roma",logo:T(497)}, A=DL[4]?{id:DL[4].id,name:DL[4].name,logo:T(DL[4].id)}:{id:541,name:"Real Madrid",logo:T(541)};
   const xi=arr=>arr.map((p,i)=>({player:{id:i+1,name:p[0],number:p[1],pos:p[2],grid:p[3]}}));
   const lineups=[
     {team:{id:H.id,name:H.name,logo:H.logo,colors:{player:{primary:(DL[3]&&DL[3].c)||"8e1f2f",number:"f0bc42"}}},formation:"3-4-2-1",coach:{name:"G. Gasperini"},
      startXI:xi([["Gollini",95,"G","1:1"],["Hermoso",22,"D","2:1"],["Ndicka",5,"D","2:2"],["Mancini",23,"D","2:3"],["Wesley",43,"M","3:1"],["De Roon",15,"M","3:2"],["Koné",17,"M","3:3"],["Molina",3,"M","3:4"],["Soulé",18,"M","4:1"],["Dybala",21,"M","4:2"],["Malen",14,"F","5:1"]])},
-    {team:{id:A.id,name:A.name,logo:A.logo,colors:{player:{primary:"ffffff",number:"1c2c5b"}}},formation:"4-2-3-1",coach:{name:"X. Alonso"},
+    {team:{id:A.id,name:A.name,logo:A.logo,colors:{player:{primary:(DL[4]&&DL[4].c)||"ffffff",number:"1c2c5b"}}},formation:"4-2-3-1",coach:{name:"X. Alonso"},
      startXI:xi([["Courtois",1,"G","1:1"],["Dumfries",2,"D","2:1"],["Konaté",4,"D","2:2"],["Rüdiger",22,"D","2:3"],["Cucurella",24,"D","2:4"],["Valverde",8,"M","3:1"],["Tchouaméni",14,"M","3:2"],["Diomandé",20,"M","4:1"],["Bellingham",5,"M","4:2"],["Vinícius Júnior",7,"M","4:3"],["Kylian Mbappé",10,"F","5:1"]])}
   ];
   const script=[[8,"a","Card","Yellow Card","Tchouaméni"],[20,"h","Goal","Normal Goal","De Roon","Dybala"],[25,"a","Goal","Normal Goal","Kylian Mbappé","Vinícius Júnior"],[37,"h","Card","Yellow Card","Mancini"],[56,"h","subst","Substitution 1","El Shaarawy","Soulé"],[63,"a","Goal","Penalty","Kylian Mbappé",null],[70,"a","subst","Substitution 1","Güler","Diomandé"],[78,"h","Card","Red Card","Hermoso"],[86,"h","Goal","Normal Goal","Dybala","Malen"]];
