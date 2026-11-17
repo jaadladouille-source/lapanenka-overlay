@@ -298,7 +298,7 @@ body.live #status,body.live .hint,body.live .cam-ph{display:none!important}
 .ghost{display:none}
 .cam-prism{display:none}
 .g-league,.b-league{display:none}
-#bgLayer .dec-lfp,#bgLayer .dec-ucl,#bgLayer .dec-lla,#bgLayer .dec-unl{display:none}
+#bgLayer .dec-lfp,#bgLayer .dec-ucl,#bgLayer .dec-lla,#bgLayer .dec-unl,#bgLayer .dec-mar{display:none}
 html[data-skin] #bgLayer .dec-laliga{display:none}
 
 /* =====================================================================
@@ -864,6 +864,56 @@ html[data-skin=unl] .sep{animation:unSep 9s cubic-bezier(.7,0,.25,1) infinite}
 html[data-skin=unl] .sbox{border-radius:16px;background:var(--nav)}
 html[data-skin=unl] .sbox button.pri{background:var(--uY);color:#23243a}
 
+/* =====================================================================
+   SKIN MAR — MAROC (Lions de l'Atlas)
+   Rouge du drapeau en profondeur, vert de l'étoile, laiton doré des lanternes
+   et des portes de médina. Motif : zellige (étoile à 8 branches) en filigrane ;
+   l'étoile verte à 5 branches du drapeau sépare les scores ; cadres en double
+   filet doré comme les bordures de zellige. « DIMA MAGHRIB » sur les buts.
+   ===================================================================== */
+html[data-skin=mar]{--mR:#c1272d;--mG:#0f9a52;--mGd:#006233;--mO:#d9a54a;--cream:#f6ecd8;--muted:rgba(246,236,216,.62);--line:rgba(217,165,74,.18);--tile:rgba(255,255,255,.05)}
+html[data-skin=mar] :is(.pill,#leagueName,.tname,#tabTitle,.host b,#ltSub .s1,#banner .b2,.g-team,.tk-txt b){letter-spacing:.6px}
+html[data-skin=mar] .panel,html[data-skin=mar] #ticker,html[data-skin=mar] #ltId,html[data-skin=mar] #ltToast{border-radius:14px;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2272%22%20height%3D%2272%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23d9a54a%22%20stroke-opacity%3D%22.16%22%20stroke-width%3D%222%22%3E%3Crect%20x%3D%2220%22%20y%3D%2220%22%20width%3D%2232%22%20height%3D%2232%22/%3E%3Crect%20x%3D%2220%22%20y%3D%2220%22%20width%3D%2232%22%20height%3D%2232%22%20transform%3D%22rotate%2845%2036%2036%29%22/%3E%3Cpath%20d%3D%22M0%20-10L10%200L0%2010L-10%200Z%20M72%20-10L82%200L72%2010L62%200Z%20M0%2062L10%2072L0%2082L-10%2072Z%20M72%2062L82%2072L72%2082L62%2072Z%22/%3E%3C/g%3E%3Ccircle%20cx%3D%2236%22%20cy%3D%2236%22%20r%3D%225%22%20fill%3D%22%230a8a4a%22%20fill-opacity%3D%22.22%22/%3E%3C/svg%3E") center/72px,linear-gradient(160deg,#7a1019,#4f0910);box-shadow:inset 0 0 0 2px rgba(217,165,74,.55),inset 0 0 0 6px #4f0910,inset 0 0 0 7.5px rgba(217,165,74,.3);transition:none}
+html[data-skin=mar] .panel::before{left:24px;right:24px;height:5px;border-radius:0 0 4px 4px;background:linear-gradient(90deg,var(--mR) 0 50%,var(--mG) 50%)}
+html[data-skin=mar] .pill{border-radius:6px}
+html[data-skin=mar] .pill.dark{background:rgba(0,0,0,.25);box-shadow:inset 0 0 0 1.5px rgba(217,165,74,.4);color:var(--cream)}
+html[data-skin=mar] #livePill.red{background:var(--mG);color:#fff}
+html[data-skin=mar] .lg{background:var(--cream)}
+html[data-skin=mar] #round{color:var(--mO)}
+html[data-skin=mar] .crest{filter:drop-shadow(0 6px 14px rgba(0,0,0,.35))}
+html[data-skin=mar] .tname::after{height:5px;border-radius:2px}
+html[data-skin=mar] .digits{color:var(--cream)}
+html[data-skin=mar] .sep{font-size:0;width:64px;height:64px;margin:0 6px;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%22-50%20-50%20100%20100%22%3E%3Cpath%20d%3D%22M0-44L25.9%2035.6-41.8-13.6H41.8L-25.9%2035.6Z%22%20fill%3D%22none%22%20stroke%3D%22%2312a35a%22%20stroke-width%3D%228%22%20stroke-linejoin%3D%22miter%22/%3E%3C/svg%3E") center/contain no-repeat;animation:marStar 10s linear infinite}
+@keyframes marStar{to{transform:rotate(360deg)}}
+html[data-skin=mar] .vs{color:var(--mO)}
+html[data-skin=mar] #clock{background:var(--mGd);color:var(--cream);box-shadow:inset 0 0 0 1.5px var(--mO);border-radius:6px}
+html[data-skin=mar] .digit.bump{animation:bumpMar 1.2s var(--ease)}
+@keyframes bumpMar{25%{transform:scale(1.15);color:var(--mO)}}
+html[data-skin=mar] .cam-ph{border-radius:14px;background:#3d0a10}
+html[data-skin=mar] .cam-border{inset:-8px;border-radius:20px;border:2px solid var(--mO);box-shadow:inset 0 0 0 4px transparent,inset 0 0 0 6px rgba(217,165,74,.45);transition:none}
+html[data-skin=mar] .cam-border::before,html[data-skin=mar] .cam-border::after{content:"";position:absolute;width:44px;height:44px;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2044%2044%22%3E%3Cg%20fill%3D%22%23d9a54a%22%3E%3Crect%20x%3D%229%22%20y%3D%229%22%20width%3D%2226%22%20height%3D%2226%22/%3E%3Crect%20x%3D%229%22%20y%3D%229%22%20width%3D%2226%22%20height%3D%2226%22%20transform%3D%22rotate%2845%2022%2022%29%22/%3E%3C/g%3E%3Ccircle%20cx%3D%2222%22%20cy%3D%2222%22%20r%3D%227%22%20fill%3D%22%230f9a52%22/%3E%3C/svg%3E") center/contain no-repeat;top:-22px}
+html[data-skin=mar] .cam-border::before{left:-22px}html[data-skin=mar] .cam-border::after{right:-22px}
+html[data-skin=mar] .wm{background:var(--mR);border-radius:8px;box-shadow:inset 0 0 0 1.5px var(--mO)}
+html[data-skin=mar] .lt-r,html[data-skin=mar] .tmin{color:var(--mO)}
+html[data-skin=mar] #ltSub{background:var(--mGd);color:var(--cream)}
+html[data-skin=mar] #tkLabel{background:var(--mG);color:#fff;border-radius:6px}
+html[data-skin=mar] .tsc{background:var(--cream);color:#4f0910;border-radius:4px}
+html[data-skin=mar] .dots i.on,html[data-skin=mar] .prog i{background:var(--mO)}
+html[data-skin=mar] .sv.lead,html[data-skin=mar] .ev .m{color:var(--mO)}
+html[data-skin=mar] .pitch{background:#0b6a3a url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2272%22%20height%3D%2272%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23d9a54a%22%20stroke-opacity%3D%22.16%22%20stroke-width%3D%222%22%3E%3Crect%20x%3D%2220%22%20y%3D%2220%22%20width%3D%2232%22%20height%3D%2232%22/%3E%3Crect%20x%3D%2220%22%20y%3D%2220%22%20width%3D%2232%22%20height%3D%2232%22%20transform%3D%22rotate%2845%2036%2036%29%22/%3E%3Cpath%20d%3D%22M0%20-10L10%200L0%2010L-10%200Z%20M72%20-10L82%200L72%2010L62%200Z%20M0%2062L10%2072L0%2082L-10%2072Z%20M72%2062L82%2072L72%2082L62%2072Z%22/%3E%3C/g%3E%3Ccircle%20cx%3D%2236%22%20cy%3D%2236%22%20r%3D%225%22%20fill%3D%22%230a8a4a%22%20fill-opacity%3D%22.22%22/%3E%3C/svg%3E") center/72px;border-radius:10px}
+html[data-skin=mar] .mc .s{background:var(--cream);color:#4f0910}
+html[data-skin=mar] #banner{background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2272%22%20height%3D%2272%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23d9a54a%22%20stroke-opacity%3D%22.16%22%20stroke-width%3D%222%22%3E%3Crect%20x%3D%2220%22%20y%3D%2220%22%20width%3D%2232%22%20height%3D%2232%22/%3E%3Crect%20x%3D%2220%22%20y%3D%2220%22%20width%3D%2232%22%20height%3D%2232%22%20transform%3D%22rotate%2845%2036%2036%29%22/%3E%3Cpath%20d%3D%22M0%20-10L10%200L0%2010L-10%200Z%20M72%20-10L82%200L72%2010L62%200Z%20M0%2062L10%2072L0%2082L-10%2072Z%20M72%2062L82%2072L72%2082L62%2072Z%22/%3E%3C/g%3E%3Ccircle%20cx%3D%2236%22%20cy%3D%2236%22%20r%3D%225%22%20fill%3D%22%230a8a4a%22%20fill-opacity%3D%22.22%22/%3E%3C/svg%3E") center/72px,linear-gradient(160deg,#0b7a43,#004a27)}
+html[data-skin=mar] #banner::before{background:var(--mR)}
+html[data-skin=mar] #banner .b2{color:var(--mO)}
+html[data-skin=mar] .g-top{background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2272%22%20height%3D%2272%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23d9a54a%22%20stroke-opacity%3D%22.16%22%20stroke-width%3D%222%22%3E%3Crect%20x%3D%2220%22%20y%3D%2220%22%20width%3D%2232%22%20height%3D%2232%22/%3E%3Crect%20x%3D%2220%22%20y%3D%2220%22%20width%3D%2232%22%20height%3D%2232%22%20transform%3D%22rotate%2845%2036%2036%29%22/%3E%3Cpath%20d%3D%22M0%20-10L10%200L0%2010L-10%200Z%20M72%20-10L82%200L72%2010L62%200Z%20M0%2062L10%2072L0%2082L-10%2072Z%20M72%2062L82%2072L72%2082L62%2072Z%22/%3E%3C/g%3E%3Ccircle%20cx%3D%2236%22%20cy%3D%2236%22%20r%3D%225%22%20fill%3D%22%230a8a4a%22%20fill-opacity%3D%22.22%22/%3E%3C/svg%3E") center/72px,var(--gcol)}
+html[data-skin=mar] .g-bot{background:linear-gradient(160deg,#7a1019,#4f0910)}
+html[data-skin=mar] .g-top::after{content:"DIMA MAGHRIB";position:absolute;left:0;right:0;bottom:18px;text-align:center;font:700 26px/1 var(--cond);letter-spacing:9px;color:var(--mO);text-shadow:0 2px 0 rgba(0,0,0,.35)}
+html[data-skin=mar] #bgLayer .dec-mar{display:inline}
+@keyframes marDrift{to{transform:translateY(-72px)}}
+html[data-skin=mar] #bgLayer .mar-pat{animation:marDrift 14s linear infinite}
+html[data-skin=mar] .sbox{background:#4f0910;border-radius:14px}
+@media (prefers-reduced-motion:reduce){html[data-skin=mar] :is(.sep,#bgLayer .mar-pat){animation:none}}
+
 /* Objectif abonnés : déclinaisons par skin */
 html[data-skin=lfp] .sg-top b{font-weight:900;font-stretch:62%;font-size:34px}
 html[data-skin=lfp] :is(.sg-top span,.sg-top em,.mile-prog){font-stretch:100%;font-weight:600}
@@ -920,6 +970,8 @@ html[data-skin=ucl] .sg-bar i{background:var(--prism)}
           <rect x="1350" y="1240" width="34" height="680" style="fill:var(--p1)"/>
         </g>
       </g>
+      <!-- Skin MAR (Maroc) : zellige qui défile lentement -->
+      <g class="dec-mar"><defs><pattern id="zelP" width="72" height="72" patternUnits="userSpaceOnUse"><image href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2272%22%20height%3D%2272%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23d9a54a%22%20stroke-opacity%3D%22.3%22%20stroke-width%3D%222%22%3E%3Crect%20x%3D%2220%22%20y%3D%2220%22%20width%3D%2232%22%20height%3D%2232%22/%3E%3Crect%20x%3D%2220%22%20y%3D%2220%22%20width%3D%2232%22%20height%3D%2232%22%20transform%3D%22rotate%2845%2036%2036%29%22/%3E%3Cpath%20d%3D%22M0%20-10L10%200L0%2010L-10%200Z%20M72%20-10L82%200L72%2010L62%200Z%20M0%2062L10%2072L0%2082L-10%2072Z%20M72%2062L82%2072L72%2082L62%2072Z%22/%3E%3C/g%3E%3Ccircle%20cx%3D%2236%22%20cy%3D%2236%22%20r%3D%225%22%20fill%3D%22%230a8a4a%22%20fill-opacity%3D%22.22%22/%3E%3C/svg%3E" width="72" height="72"/></pattern></defs><rect class="mar-pat" x="0" y="0" width="1080" height="2000" fill="url(#zelP)"/></g>
       <!-- Skin UNL (Ligue des nations) : modules « drapeau » (losange + rond central en deux moitiés), triangles qui montent/descendent -->
       <g class="dec-unl">
 <defs><linearGradient id="unShineG" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".35"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>
@@ -1307,6 +1359,9 @@ const THEMES = {
               nav:"#262624",navm:"#444441",navd:"#161616",acc:"#74fbd3",acc2:"#7e4df7",red:"#7e4df7",bg:"#161616"},
   // LALIGA : skin "lla" (identité 2023 : corail, nuit bleutée, typo à largeur variable, pièces du code secret)
   // LIGUE DES NATIONS : skin "unl" (identité Y&R : modules drapeau, triangles qui montent/descendent, ardoise)
+  // MAROC : skin "mar" (rouge profond, vert de l'étoile, laiton, zellige) — prioritaire dès que le Maroc joue
+  maroc:     {label:"Maroc (rouge / vert / zellige)", skin:"mar", p1:"#c1272d", p2:"#0f9a52",
+              nav:"#6a0e17",navm:"#8a1520",navd:"#4f0910",acc:"#d9a54a",acc2:"#0f9a52",red:"#c1272d",bg:"#3d070d"},
   nations:   {label:"Ligue des nations (drapeaux / ardoise)", skin:"unl", p1:"#e2453d", p2:"#f6c443",
               nav:"#353a5c",navm:"#454b70",navd:"#262a45",acc:"#f6c443",acc2:"#e2453d",red:"#e2453d",bg:"#2b2f4d"},
   laliga:    {label:"LaLiga (corail / nuit)", skin:"lla", p1:"#ff4b44", p2:"#00d6d6",
@@ -1407,6 +1462,7 @@ function autoTheme(f){
   if(!f) return "default";
   const clubs=[f.teams.home.id,f.teams.away.id].map(id=>CLUB_THEME[id]).filter(Boolean);
   // priorité au thème de la compétition, sinon celui du club
+  if([f.teams.home.id,f.teams.away.id].includes(31)) return "maroc"; // le Maroc garde son thème quelle que soit la compétition
   return LEAGUE_THEME[f.league.id] || clubs[0] || "default";
 }
 function applyTheme(name){
@@ -1949,7 +2005,7 @@ function setStatus(){
 function startDemo(){
   const T=id=>"https://media.api-sports.io/football/teams/"+id+".png";
   // La démo prend la compétition du thème choisi (ex. ?demo=1&theme=laliga → Séville - Real Madrid en LaLiga)
-  const DL={laliga:[140,"La Liga","Regular Season - 12",{id:536,name:"Sevilla",c:"ffffff"}],ligue1:[61,"Ligue 1","Regular Season - 12",{id:85,name:"Paris Saint Germain",c:"0a1a4a"}],ligue2:[62,"Ligue 2","Regular Season - 14",{id:1063,name:"Saint Etienne",c:"009a44"}],europa:[3,"UEFA Europa League","League Stage - 4",null],conference:[848,"UEFA Europa Conference League","League Stage - 3",null],nations:[5,"UEFA Nations League","League A - 5",{id:2,name:"France",c:"1d3a8a"},{id:9,name:"Spain",c:"c60b1e"}]}[manualTheme]||[2,"UEFA Champions League","League Stage - 4",null];
+  const DL={laliga:[140,"La Liga","Regular Season - 12",{id:536,name:"Sevilla",c:"ffffff"}],ligue1:[61,"Ligue 1","Regular Season - 12",{id:85,name:"Paris Saint Germain",c:"0a1a4a"}],ligue2:[62,"Ligue 2","Regular Season - 14",{id:1063,name:"Saint Etienne",c:"009a44"}],europa:[3,"UEFA Europa League","League Stage - 4",null],conference:[848,"UEFA Europa Conference League","League Stage - 3",null],maroc:[6,"Africa Cup of Nations","Group Stage - 1",{id:31,name:"Morocco",c:"c1272d"},{id:1504,name:"Niger",c:"f77f00"}],nations:[5,"UEFA Nations League","League A - 5",{id:2,name:"France",c:"1d3a8a"},{id:9,name:"Spain",c:"c60b1e"}]}[manualTheme]||[2,"UEFA Champions League","League Stage - 4",null];
   const H=DL[3]?{id:DL[3].id,name:DL[3].name,logo:T(DL[3].id)}:{id:497,name:"AS Roma",logo:T(497)}, A=DL[4]?{id:DL[4].id,name:DL[4].name,logo:T(DL[4].id)}:{id:541,name:"Real Madrid",logo:T(541)};
   const xi=arr=>arr.map((p,i)=>({player:{id:i+1,name:p[0],number:p[1],pos:p[2],grid:p[3]}}));
   const lineups=[
