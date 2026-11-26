@@ -6,12 +6,13 @@
 <meta name="viewport" content="width=1080">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@500;600;700&family=Barlow+Condensed:wght@600;700;800&family=League+Gothic&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
 /* =====================================================================
    LA PANENKA — OVERLAY REACT VERTICAL 1080 x 1920 (TikTok LIVE Studio)
    Scènes : ?scene=resume | info | debat | pause
    Textes : &titre=…  &source=…  &question=…  &tag=…
+   Thème Ligue des champions : &theme=ldc (+ &key=… pour le multiplex des scores en direct)
    Les zones "écran" et "caméra" sont transparentes : mets ta capture
    d'écran et ta caméra EN DESSOUS de ce lien dans LIVE Studio.
    ===================================================================== */
@@ -95,6 +96,46 @@ body{font-family:var(--ui);color:var(--cream)}
 
 #stripeR{animation:slide 16s linear infinite}
 @keyframes slide{to{transform:translateX(140px)}}
+
+/* ===== Thème LDC : nuit européenne (même DA que l'overlay match LDC) ===== */
+[data-theme=ldc]{--nav:#0a0a61;--navm:#14147a;--navd:#000040;--acc:#00d9f7;--red:#ff4fd8;--cream:#eef0ff;--muted:rgba(238,240,255,.62);--bgc:#000040;
+  --anton:"League Gothic","Arial Narrow",sans-serif;--cond:"League Gothic","Arial Narrow",sans-serif;--ui:"Manrope",system-ui,sans-serif;
+  --prism:linear-gradient(90deg,#00d9f7 0%,#0232ff 30%,#7b3cff 54%,#ff4fd8 78%,#ff8a5c 100%)}
+[data-theme=ldc] #ldcDec{display:inline!important}
+[data-theme=ldc] .nldc{display:none}
+[data-theme=ldc] #title,[data-theme=ldc] #infoTitle,[data-theme=ldc] #debQ{font-size:60px;letter-spacing:.5px}
+[data-theme=ldc] #infoTitle,[data-theme=ldc] #debQ{font-size:72px}
+[data-theme=ldc] .tag{background:#fff;color:#000040;font-size:28px;font-weight:400;letter-spacing:1.5px}
+[data-theme=ldc] .tag.red{background:var(--prism);color:#fff}
+[data-theme=ldc] .chip{font-family:var(--ui);font-weight:800;font-size:15px;letter-spacing:1.2px;background:rgba(0,0,64,.85);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.2)}
+[data-theme=ldc] .chip.y{background:#fff;color:#000040}
+[data-theme=ldc] .tc .chip{font-family:var(--anton);font-weight:400;font-size:22px}
+[data-theme=ldc] .frame i{border-color:#00d9f7}
+[data-theme=ldc] .frame i:nth-child(3),[data-theme=ldc] .frame i:nth-child(4){border-color:#ff4fd8}
+[data-theme=ldc] .frame.cam i{border-color:#fff}
+[data-theme=ldc] .frame .rim{box-shadow:0 0 0 2px rgba(255,255,255,.18),0 0 40px rgba(2,50,255,.45)}
+[data-theme=ldc] #infoBox,[data-theme=ldc] #band{background:rgba(0,0,64,.82);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.14)}
+[data-theme=ldc] #infoBox::before{background:var(--prism)}
+[data-theme=ldc] #debBox{background:#fff;color:#000040}
+[data-theme=ldc] #debBox .k::before{background:var(--prism)}
+[data-theme=ldc] #band .wm{background:var(--prism)}
+[data-theme=ldc] #band .wm b{color:#fff;font-size:32px}
+[data-theme=ldc] #band .m{font-family:var(--ui);font-weight:800;font-size:22px;letter-spacing:.6px}
+[data-theme=ldc] #band .m em{color:#00d9f7}
+[data-theme=ldc] #pause h1 span{background:var(--prism);-webkit-background-clip:text;background-clip:text;color:transparent}
+[data-theme=ldc] .marq{background:#fff;color:#000040}[data-theme=ldc] .marq.b{background:var(--prism);color:#fff}
+[data-theme=ldc] #pause .count{background:#fff;color:#000040}
+.ldc-drift{animation:ldcDrift 60s linear infinite}@keyframes ldcDrift{to{transform:translateY(240px)}}
+.ldc-beamL{transform-origin:95px -40px;animation:beamL 9s ease-in-out infinite}.ldc-beamR{transform-origin:985px -40px;animation:beamR 11s ease-in-out infinite}
+@keyframes beamL{50%{transform:rotate(-5deg)}}@keyframes beamR{50%{transform:rotate(5deg)}}
+/* Multiplex : scores en direct de la soirée, qui défilent */
+#mx{position:absolute;inset:0;display:flex;align-items:center;overflow:hidden}
+#mx .tr{display:flex;gap:34px;white-space:nowrap;animation:mx 40s linear infinite;padding-left:24px}
+@keyframes mx{to{transform:translateX(-50%)}}
+#mx .it{display:inline-flex;align-items:center;gap:10px;font:800 22px/1 var(--ui);letter-spacing:.4px;text-transform:uppercase}
+#mx .it img{width:30px;height:30px;object-fit:contain}
+#mx .sc{background:#fff;color:#000040;padding:5px 9px;border-radius:5px;font-family:var(--anton);font-weight:400;font-size:26px;letter-spacing:1px}
+#mx .mn{color:#00d9f7;font-size:18px}
 /* scènes */
 [data-scene=pause] #pause{display:block}
 [data-scene=pause] :is(#head,#band){display:none}
@@ -109,15 +150,26 @@ body{font-family:var(--ui);color:var(--cream)}
       <pattern id="stripes" width="140" height="1920" patternUnits="userSpaceOnUse"><rect width="70" height="1920" fill="#fff" fill-opacity=".018"/></pattern>
       <radialGradient id="glow" cx=".5" cy=".18" r=".7"><stop offset="0" stop-color="#22448e" stop-opacity=".55"/><stop offset="1" stop-color="#22448e" stop-opacity="0"/></radialGradient>
       <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .05 0"/></filter>
+      <radialGradient id="ldcGlow" cx=".5" cy=".05" r=".8"><stop offset="0" stop-color="#2a3cff" stop-opacity=".55"/><stop offset=".55" stop-color="#0a0a61" stop-opacity=".35"/><stop offset="1" stop-color="#000040" stop-opacity="0"/></radialGradient>
+      <linearGradient id="ldcBeam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fe9ff" stop-opacity=".16"/><stop offset="1" stop-color="#9fe9ff" stop-opacity="0"/></linearGradient>
+      <pattern id="ldcStars" width="240" height="240" patternUnits="userSpaceOnUse"><g fill="#fff"><path d="M40 30l2.5 9 9 2.5-9 2.5-2.5 9-2.5-9-9-2.5 9-2.5z" opacity=".55"/><circle cx="170" cy="60" r="1.6" opacity=".6"/><circle cx="110" cy="150" r="1.2" opacity=".5"/><path d="M200 180l1.8 6.5 6.5 1.8-6.5 1.8-1.8 6.5-1.8-6.5-6.5-1.8 6.5-1.8z" opacity=".4"/><circle cx="60" cy="210" r="1.4" opacity=".45"/></g></pattern>
       <clipPath id="holes"><path id="holePath" clip-rule="evenodd" d="M0 0H1080V1920H0Z"/></clipPath>
     </defs>
     <g clip-path="url(#holes)">
-      <rect width="1080" height="1920" fill="#0b1838"/>
-      <rect width="1080" height="1920" fill="url(#glow)"/>
+      <rect width="1080" height="1920" style="fill:var(--bgc,#0b1838)"/>
+      <rect width="1080" height="1920" fill="url(#glow)" class="nldc"/>
       <g transform="skewX(-12)"><rect id="stripeR" x="-140" width="1500" height="1920" fill="url(#stripes)"/></g>
       <!-- traces de terrain : rond central et surface, en filigrane -->
       <g fill="none" stroke="#f6eedb" stroke-opacity=".05" stroke-width="4">
         <circle cx="540" cy="1920" r="300"/><path d="M0 1620H1080"/><circle cx="540" cy="0" r="170"/>
+      </g>
+      <!-- LDC : nuit européenne, faisceaux, arcs du dôme, étincelles à 4 branches (pas de starball) -->
+      <g id="ldcDec" style="display:none">
+        <rect width="1080" height="1920" fill="url(#ldcGlow)"/>
+        <g class="ldc-drift"><rect x="0" y="-300" width="1080" height="2400" fill="url(#ldcStars)"/></g>
+        <g class="ldc-beamL"><polygon points="40,-40 150,-40 600,1560 330,1560" fill="url(#ldcBeam)"/></g>
+        <g class="ldc-beamR"><polygon points="930,-40 1040,-40 750,1560 480,1560" fill="url(#ldcBeam)"/></g>
+        <g fill="none" stroke="#fff" stroke-opacity=".07" stroke-width="2"><ellipse cx="540" cy="-300" rx="520" ry="460"/><ellipse cx="540" cy="-300" rx="720" ry="640"/><ellipse cx="540" cy="-300" rx="930" ry="830"/><ellipse cx="540" cy="2250" rx="900" ry="560"/></g>
       </g>
       <rect width="1080" height="1920" filter="url(#grain)"/>
     </g>
@@ -160,6 +212,7 @@ const $=id=>document.getElementById(id), qs=new URLSearchParams(location.search)
 const get=(k,d)=>{const v=qs.get(k); return v&&v.trim()?v.trim():d;};
 const SCENE=(get("scene","resume")).toLowerCase();
 document.documentElement.dataset.scene=SCENE;
+const THEME=(get("theme","")).toLowerCase(); if(THEME) document.documentElement.dataset.theme=THEME;
 
 /* mise à l'échelle 1080x1920 dans la fenêtre */
 function fit(){const s=Math.min(innerWidth/1080,innerHeight/1920);const st=$("stage");st.style.transform="scale("+s+")";st.style.left=((innerWidth-1080*s)/2)+"px";st.style.top=((innerHeight-1920*s)/2)+"px";}
@@ -173,7 +226,7 @@ function rr(x,y,w,h,r){return `M${x+r} ${y}H${x+w-r}A${r} ${r} 0 0 1 ${x+w} ${y+
 
 const titre=get("titre",""), tag=get("tag","");
 const SC={
-  resume:{tag:"Résumé",title:titre||"Le résumé du match",scr:"Résumé"},
+  resume:{tag:THEME==="ldc"?"LDC":"Résumé",title:titre||(THEME==="ldc"?"La soirée européenne":"Le résumé du match"),scr:"Résumé"},
   info:{tag:"Info",title:"",scr:"La source"},
   debat:{tag:"Débat",title:titre||"On en parle",scr:"Écran"},
   pause:{}
@@ -221,6 +274,26 @@ const MSGS=[
 const box2=$("msgs"); MSGS.forEach((h,i)=>{const d=document.createElement("div");d.className="m"+(i?"":" on");d.innerHTML=h;box2.appendChild(d);});
 let mi=0; setInterval(()=>{const ms=box2.children;ms[mi].className="m off";mi=(mi+1)%ms.length;ms[mi].className="m";void ms[mi].offsetWidth;ms[mi].className="m on";setTimeout(()=>{[...ms].forEach((m,i)=>{if(i!==mi)m.className="m";});},700);},6000);
 
+/* Multiplex LDC : scores de la soirée (API-Football), mis à jour toutes les 4 min pour ménager le quota */
+const KEY=get("key","");
+if(THEME==="ldc" && KEY && SCENE!=="pause"){
+  const esc=t=>String(t==null?"":t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const short=n=>esc(n).replace(/^(FC|AC|AS|SL|SC|RB|SS) /,"").replace(/ (FC|CF)$/,"").slice(0,14);
+  async function mx(){
+    try{
+      const d=new Date(), day=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+      const r=await fetch("https://v3.football.api-sports.io/fixtures?date="+day+"&timezone=Europe/Paris",{headers:{"x-apisports-key":KEY}});
+      const j=await r.json(); const fx=(j.response||[]).filter(f=>f.league.id===2);
+      if(!fx.length) return;
+      const st=f=>{const s=f.fixture.status; if(s.short==="NS") return f.fixture.date.slice(11,16).replace(":","h"); if(["FT","AET","PEN"].includes(s.short)) return "Fin"; if(s.short==="HT") return "MT"; return (s.elapsed||"")+"'";};
+      const one=f=>'<span class="it"><img src="'+esc(f.teams.home.logo)+'" alt="">'+short(f.teams.home.name)+'<span class="sc">'+(f.goals.home==null?"-":f.goals.home)+" - "+(f.goals.away==null?"-":f.goals.away)+'</span>'+short(f.teams.away.name)+'<img src="'+esc(f.teams.away.logo)+'" alt=""><span class="mn">'+st(f)+'</span></span>';
+      const html=fx.map(one).join("");
+      let el=$("mx"); if(!el){ el=document.createElement("div"); el.id="mx"; $("msgs").innerHTML=""; $("msgs").appendChild(el); $("band").querySelector(".wm b").textContent="MULTIPLEX"; }
+      el.innerHTML='<div class="tr">'+html+html+'</div>';
+    }catch(e){}
+  }
+  mx(); setInterval(mx,240000);
+}
 </script>
 </body>
 </html>
