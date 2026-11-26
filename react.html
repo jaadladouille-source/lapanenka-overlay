@@ -68,7 +68,17 @@ body{font-family:var(--ui);color:var(--cream)}
 #debBox .k{font:800 22px/1 var(--cond);letter-spacing:2px;text-transform:uppercase;display:flex;align-items:center;gap:10px}
 #debBox .k::before{content:"";width:28px;height:6px;background:var(--navd);border-radius:3px}
 #debQ{margin-top:10px;font:400 54px/1.04 var(--anton);text-transform:uppercase;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-#debBox .cta{margin-top:12px;font:700 22px/1 var(--ui)}
+#debBox .cta{margin-top:16px;font:700 22px/1.2 var(--ui)}
+#debQ{-webkit-line-clamp:3}
+#debBox .join{margin-top:22px;display:flex;align-items:center;gap:18px;padding:18px 20px;border-radius:12px;background:var(--navd);color:var(--cream)}
+#debBox .join b{display:block;font:400 40px/1 var(--anton);text-transform:uppercase;letter-spacing:.5px}
+#debBox .join span{display:block;margin-top:6px;font:600 20px/1.2 var(--ui);color:var(--muted)}
+#debBox .jic{flex:none;width:62px;height:62px;border-radius:50%;background:var(--acc);position:relative;animation:pulse 1.8s ease-out infinite}
+#debBox .jic::before{content:"";position:absolute;left:50%;top:16px;width:18px;height:18px;margin-left:-9px;border-radius:50%;background:var(--navd)}
+#debBox .jic::after{content:"";position:absolute;left:50%;bottom:13px;width:32px;height:15px;margin-left:-16px;border-radius:16px 16px 4px 4px;background:var(--navd)}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--acc) 60%,transparent)}100%{box-shadow:0 0 0 22px transparent}}
+[data-theme=ldc] #debBox .join{background:#000040;color:#fff}
+[data-theme=ldc] #debBox .jic{background:var(--prism)}
 
 /* --- Bandeau du bas (messages qui tournent) --- */
 #band{left:40px;width:1000px;height:70px;border-radius:14px;background:var(--navd);box-shadow:inset 0 0 0 1.5px rgba(246,238,219,.1);display:flex;align-items:center;overflow:hidden}
@@ -104,7 +114,7 @@ body{font-family:var(--ui);color:var(--cream)}
 [data-theme=ldc] #ldcDec{display:inline!important}
 [data-theme=ldc] .nldc{display:none}
 [data-theme=ldc] #title,[data-theme=ldc] #infoTitle,[data-theme=ldc] #debQ{font-size:60px;letter-spacing:.5px}
-[data-theme=ldc] #infoTitle,[data-theme=ldc] #debQ{font-size:72px}
+[data-theme=ldc] #infoTitle{font-size:72px}[data-theme=ldc] #debQ{font-size:82px}
 [data-theme=ldc] .tag{background:#fff;color:#000040;font-size:28px;font-weight:400;letter-spacing:1.5px}
 [data-theme=ldc] .tag.red{background:var(--prism);color:#fff}
 [data-theme=ldc] .chip{font-family:var(--ui);font-weight:800;font-size:15px;letter-spacing:1.2px;background:rgba(0,0,64,.85);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.2)}
@@ -191,7 +201,7 @@ body{font-family:var(--ui);color:var(--cream)}
     <div class="label"><span class="chip">Erwane · La Panenka</span></div>
   </div>
 
-  <div id="debBox" class="abs hide"><div class="k">Le débat</div><div id="debQ"></div><div class="cta">Ton avis dans le chat. Je lis tout.</div></div>
+  <div id="debBox" class="abs hide"><div class="k">Le débat</div><div id="debQ"></div><div class="join"><span class="jic"></span><div><b>Monte sur le live pour débattre</b><span>Demande à rejoindre, je fais monter les gens en direct</span></div></div><div class="cta">Ou balance ton avis dans le chat, je lis tout.</div></div>
 
   <div id="band" class="abs"><div class="wm"><b>LIVE</b></div><div class="msgs" id="msgs"></div></div>
 
@@ -248,13 +258,13 @@ if(SCENE==="pause"){
     place("scr",40,500,1000,500);       // capture d'écran : tweet, article, vidéo
     place("cam",40,1040,1000,450);      // caméra
   }else if(SCENE==="debat"){
-    place("cam",40,282,1000,860);       // caméra en grand
+    place("cam",40,282,1000,562);       // caméra 16:9 (format de l'iPhone en paysage, sans recadrage)
     if(get("pip","")){ place("scr",600,316,410,231,true); $("scr").querySelector(".tc").classList.add("hide"); }
     $("debQ").textContent=get("question","Qui avait raison ?");
-    box("debBox",1174);
+    box("debBox",886);
   }else{
-    place("scr",40,282,1000,562);       // 16:9 pour un résumé de match
-    place("cam",40,884,1000,606);       // caméra
+    place("cam",40,282,1000,562);       // caméra en haut (16:9, comme l'iPhone en paysage)
+    place("scr",40,884,1000,562);       // écran du résumé en bas (16:9)
   }
   $("holePath").setAttribute("d","M0 0H1080V1920H0Z"+holes.map(h=>rr(h[0],h[1],h[2],h[3],16)).join(""));
   $("band").style.top="1516px";
