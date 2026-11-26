@@ -146,6 +146,29 @@ body{font-family:var(--ui);color:var(--cream)}
 #mx .it img{width:30px;height:30px;object-fit:contain}
 #mx .sc{background:#fff;color:#000040;padding:5px 9px;border-radius:5px;font-family:var(--anton);font-weight:400;font-size:26px;letter-spacing:1px}
 #mx .mn{color:#00d9f7;font-size:18px}
+
+/* Classement LDC en direct (scène débat) : 8 équipes par page, 2 colonnes, pages qui tournent */
+#tbl{left:40px;width:1000px;height:196px;border-radius:14px;background:var(--navd);box-shadow:inset 0 0 0 1.5px rgba(246,238,219,.12);padding:14px 18px 12px}
+#tbl .th{display:flex;justify-content:space-between;align-items:center;height:28px}
+#tbl .tt{display:flex;align-items:center;gap:10px;font:800 19px/1 var(--cond);letter-spacing:1.4px;text-transform:uppercase}
+#tbl .tt em{font-style:normal;color:var(--acc)}
+#tbl .lv{width:10px;height:10px;border-radius:50%;background:var(--red);animation:blink 1.2s infinite}
+#tbl .pg{font:700 15px/1 var(--ui);color:var(--muted);letter-spacing:.5px}
+#tbl .rows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-flow:column;grid-template-rows:repeat(4,34px);column-gap:26px;margin-top:6px;transition:opacity .35s}
+#tbl .rows.fade{opacity:0}
+#tbl .r{display:flex;align-items:center;gap:10px;font:700 20px/1 var(--ui);border-bottom:1px solid rgba(255,255,255,.06);white-space:nowrap}
+#tbl .r .pos{width:30px;text-align:center;font:400 24px/1 var(--anton);border-radius:5px;padding:3px 0 1px}
+#tbl .r .z1{background:#1fbf6a;color:#04210f}#tbl .r .z2{background:rgba(255,255,255,.16)}#tbl .r .z3{color:var(--muted)}
+#tbl .r img{width:24px;height:24px;object-fit:contain}
+#tbl .r .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
+#tbl .r .gd{width:42px;text-align:right;font-size:16px;color:var(--muted)}
+#tbl .r .pt{width:40px;text-align:right;font:400 26px/1 var(--anton)}
+#tbl .r .mv{width:16px;font-size:13px;text-align:center}
+#tbl .r .up{color:#1fbf6a}#tbl .r .dn{color:var(--red)}
+#tbl .r.live .nm::after{content:"";display:inline-block;width:8px;height:8px;margin-left:8px;border-radius:50%;background:var(--red);vertical-align:middle;animation:blink 1.2s infinite}
+[data-theme=ldc] #tbl{background:rgba(0,0,64,.85);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.14)}
+[data-theme=ldc] #tbl .tt{font-family:var(--ui);font-size:16px}
+[data-theme=ldc] #tbl .r .z1{background:#00d9f7;color:#000040}
 /* scènes */
 [data-scene=pause] #pause{display:block}
 [data-scene=pause] :is(#head,#band){display:none}
@@ -202,6 +225,8 @@ body{font-family:var(--ui);color:var(--cream)}
   </div>
 
   <div id="debBox" class="abs hide"><div class="k">Le débat</div><div id="debQ"></div><div class="join"><span class="jic"></span><div><b>Monte sur le live pour débattre</b><span>Demande à rejoindre, je fais monter les gens en direct</span></div></div><div class="cta">Ou balance ton avis dans le chat, je lis tout.</div></div>
+
+  <div id="tbl" class="abs hide"><div class="th"><span class="tt"><i class="lv"></i>Classement LDC <em>en direct</em></span><span class="pg" id="tblPg"></span></div><div class="rows" id="tblRows"></div></div>
 
   <div id="band" class="abs"><div class="wm"><b>LIVE</b></div><div class="msgs" id="msgs"></div></div>
 
@@ -303,6 +328,47 @@ if(THEME==="ldc" && KEY && SCENE!=="pause"){
     }catch(e){}
   }
   mx(); setInterval(mx,240000);
+}
+/* Classement LDC en direct (scène débat) : classement ESPN + résultats des matchs en cours appliqués en direct */
+if(SCENE==="debat" && get("classement","1")!=="0"){
+  box("tbl",1306);
+  const esc=t=>String(t==null?"":t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  let rows=[], page=0;
+  const stat=(e,n)=>{const x=(e.stats||[]).find(s=>s.name===n);return x?Number(x.value):0;};
+  async function load(){
+    try{
+      const d=new Date(), ymd=d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
+      const [st,sb]=await Promise.all([
+        fetch("https://site.api.espn.com/apis/v2/sports/soccer/uefa.champions/standings").then(r=>r.json()),
+        fetch("https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions/scoreboard?dates="+ymd).then(r=>r.json()).catch(()=>({events:[]}))
+      ]);
+      const ent=((st.children||[])[0]||{}).standings?.entries||[];
+      if(!ent.length) return;
+      const T={}; ent.forEach(e=>{T[e.team.id]={id:e.team.id,name:e.team.shortDisplayName||e.team.displayName,logo:(e.team.logos||[])[0]?.href||"",gp:stat(e,"gamesPlayed"),pts:stat(e,"points"),gd:stat(e,"pointDifferential"),gf:stat(e,"pointsFor"),pre:stat(e,"rank"),live:false};});
+      const maxGp=Math.max(...Object.values(T).map(t=>t.gp));
+      (sb.events||[]).forEach(ev=>{
+        const state=ev.status?.type?.state; if(state!=="in"&&state!=="post") return;
+        const c=(ev.competitions||[])[0]?.competitors||[]; if(c.length!==2) return;
+        const a=T[c[0].team.id], b=T[c[1].team.id]; if(!a||!b) return;
+        // un match en cours n'est pas encore dans le classement ; un match fini n'y est que si ESPN l'a déjà compté
+        if(state==="post" && a.gp>=maxGp && b.gp>=maxGp) return;
+        const sa=+c[0].score||0, sbb=+c[1].score||0;
+        [[a,sa,sbb],[b,sbb,sa]].forEach(([t,f,g])=>{t.pts+=f>g?3:f===g?1:0;t.gd+=f-g;t.gf+=f;t.live=state==="in";});
+      });
+      rows=Object.values(T).sort((x,y)=>y.pts-x.pts||y.gd-x.gd||y.gf-x.gf||x.pre-y.pre);
+      draw();
+    }catch(e){}
+  }
+  function draw(){
+    if(!rows.length) return;
+    const pages=Math.ceil(rows.length/8); page=page%pages;
+    const slice=rows.slice(page*8,page*8+8);
+    $("tblPg").textContent=(page*8+1)+"-"+Math.min(rows.length,page*8+8)+" / "+rows.length;
+    $("tblRows").innerHTML=slice.map((t,i)=>{const pos=page*8+i+1, z=pos<=8?"z1":pos<=24?"z2":"z3", mv=t.pre-pos;
+      return '<div class="r'+(t.live?" live":"")+'"><span class="pos '+z+'">'+pos+'</span><span class="mv '+(mv>0?"up":mv<0?"dn":"")+'">'+(mv>0?"▲":mv<0?"▼":"")+'</span>'+(t.logo?'<img src="'+esc(t.logo)+'" alt="">':'')+'<span class="nm">'+esc(t.name)+'</span><span class="gd">'+(t.gd>0?"+":"")+t.gd+'</span><span class="pt">'+t.pts+'</span></div>';}).join("");
+  }
+  function next(){ const el=$("tblRows"); el.classList.add("fade"); setTimeout(()=>{page++;draw();el.classList.remove("fade");},350); }
+  load(); setInterval(load,60000); setInterval(next,7000);
 }
 </script>
 </body>
