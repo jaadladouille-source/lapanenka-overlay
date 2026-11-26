@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>La Panenka · React</title>
+<meta name="viewport" content="width=1080">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+/* =====================================================================
+   LA PANENKA — OVERLAY REACT VERTICAL 1080 x 1920 (TikTok LIVE Studio)
+   Scènes : ?scene=resume | info | debat | pause
+   Textes : &titre=…  &source=…  &question=…  &tag=…
+   Les zones "écran" et "caméra" sont transparentes : mets ta capture
+   d'écran et ta caméra EN DESSOUS de ce lien dans LIVE Studio.
+   ===================================================================== */
+:root{
+  --nav:#0b1838; --navm:#22448e; --navd:#060d24; --acc:#ffd21e; --acc2:#ffa51f;
+  --red:#e5243b; --cream:#f6eedb; --muted:rgba(246,238,219,.6);
+  --anton:"Anton",Impact,sans-serif; --cond:"Barlow Condensed","Arial Narrow",sans-serif; --ui:"Barlow",system-ui,sans-serif;
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:transparent}
+body{font-family:var(--ui);color:var(--cream)}
+#stage{position:absolute;left:0;top:0;width:1080px;height:1920px;transform-origin:0 0}
+#bg{position:absolute;inset:0}
+.abs{position:absolute}
+
+/* --- En-tête --- */
+#head{left:40px;top:162px;width:1000px;height:86px;display:flex;align-items:center;gap:20px}
+#head .logo{height:40px;width:auto;display:block;filter:drop-shadow(0 3px 0 rgba(0,0,0,.25))}
+.tag{display:inline-flex;align-items:center;gap:10px;height:44px;padding:0 18px 0 16px;border-radius:7px;background:var(--acc);color:var(--navd);font:800 26px/1 var(--cond);letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
+.tag .tri{width:0;height:0;border-left:14px solid currentColor;border-top:9px solid transparent;border-bottom:9px solid transparent}
+.tag.red{background:var(--red);color:#fff}
+.tag .dot{width:11px;height:11px;border-radius:50%;background:currentColor;animation:blink 1.2s infinite}
+@keyframes blink{50%{opacity:.25}}
+#title{flex:1;min-width:0;font:400 46px/1.05 var(--anton);letter-spacing:.3px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* --- Cadres : écran (moniteur) et caméra --- */
+.frame{position:absolute;pointer-events:none}
+.frame .rim{position:absolute;inset:-3px;border-radius:18px;box-shadow:0 0 0 3px rgba(246,238,219,.14),0 18px 40px rgba(0,0,0,.35)}
+.frame i{position:absolute;width:56px;height:56px;border:5px solid var(--acc);animation:breath 3.2s ease-in-out infinite}
+.frame i:nth-child(2){left:-11px;top:-11px;border-right:0;border-bottom:0;border-radius:16px 0 0 0}
+.frame i:nth-child(3){right:-11px;top:-11px;border-left:0;border-bottom:0;border-radius:0 16px 0 0}
+.frame i:nth-child(4){left:-11px;bottom:-11px;border-right:0;border-top:0;border-radius:0 0 0 16px}
+.frame i:nth-child(5){right:-11px;bottom:-11px;border-left:0;border-top:0;border-radius:0 0 16px 0}
+@keyframes breath{50%{transform:scale(1.06)}}
+.frame.cam i{border-color:var(--cream);opacity:.85}
+.label{position:absolute;top:-30px;left:26px;display:flex;gap:8px;align-items:center}
+.chip{height:34px;padding:0 13px;display:inline-flex;align-items:center;gap:8px;border-radius:6px;background:var(--navd);box-shadow:inset 0 0 0 1.5px rgba(246,238,219,.18);font:700 19px/1 var(--cond);letter-spacing:.8px;text-transform:uppercase;color:var(--cream);white-space:nowrap}
+.chip .dot{width:10px;height:10px;border-radius:50%;background:var(--red);animation:blink 1.2s infinite}
+.chip.y{background:var(--acc);color:var(--navd);box-shadow:none}
+.tc{position:absolute;top:-30px;right:26px}
+.tc .chip{font-family:var(--anton);font-weight:400;letter-spacing:1.5px;font-size:20px}
+
+/* --- Bloc info (titre en grand) --- */
+#infoBox{left:40px;top:262px;width:1000px;padding:22px 28px 20px;border-radius:16px;background:var(--navd);box-shadow:inset 0 0 0 1.5px rgba(246,238,219,.1)}
+#infoBox::before{content:"";position:absolute;left:0;top:18px;bottom:18px;width:8px;border-radius:0 4px 4px 0;background:var(--red)}
+#infoTitle{font:400 58px/1.02 var(--anton);text-transform:uppercase;letter-spacing:.3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#infoSrc{margin-top:10px;font:600 21px/1 var(--ui);color:var(--muted)}
+#infoSrc b{color:var(--acc);font-weight:700}
+
+/* --- Bloc débat --- */
+#debBox{left:40px;width:1000px;padding:24px 30px 22px;border-radius:16px;background:var(--acc);color:var(--navd)}
+#debBox .k{font:800 22px/1 var(--cond);letter-spacing:2px;text-transform:uppercase;display:flex;align-items:center;gap:10px}
+#debBox .k::before{content:"";width:28px;height:6px;background:var(--navd);border-radius:3px}
+#debQ{margin-top:10px;font:400 54px/1.04 var(--anton);text-transform:uppercase;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#debBox .cta{margin-top:12px;font:700 22px/1 var(--ui)}
+
+/* --- Bandeau du bas (messages qui tournent) --- */
+#band{left:40px;width:1000px;height:70px;border-radius:14px;background:var(--navd);box-shadow:inset 0 0 0 1.5px rgba(246,238,219,.1);display:flex;align-items:center;overflow:hidden}
+#band .wm{height:100%;padding:0 20px;display:flex;align-items:center;background:var(--acc);border-radius:14px 0 0 14px}
+#band .wm b{font:400 30px/1 var(--anton);color:var(--navd);letter-spacing:.5px}
+#band .msgs{position:relative;flex:1;height:100%}
+#band .m{position:absolute;inset:0;display:flex;align-items:center;padding:0 24px;font:700 27px/1 var(--cond);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;opacity:0;transform:translateY(24px);transition:opacity .5s var(--ease),transform .6s var(--ease)}
+#band .m.on{opacity:1;transform:none}
+#band .m.off{opacity:0;transform:translateY(-24px)}
+#band .m em{font-style:normal;color:var(--acc)}
+
+/* --- Pause --- */
+#pause{inset:0;display:none}
+#pause .center{position:absolute;left:0;right:0;top:640px;text-align:center}
+#pause .logo{height:62px;margin:0 auto 46px;display:block}
+#pause h1{font:400 200px/.9 var(--anton);text-transform:uppercase;letter-spacing:1px}
+#pause h1 span{color:var(--acc)}
+#pause p{margin-top:26px;font:700 34px/1.2 var(--cond);letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+#pause .count{margin-top:34px;display:inline-block;padding:14px 34px;border-radius:10px;background:var(--acc);color:var(--navd);font:400 64px/1 var(--anton);letter-spacing:2px}
+.marq{position:absolute;left:0;width:100%;height:84px;overflow:hidden;background:var(--acc);color:var(--navd);transform:rotate(-4deg)}
+.marq div{position:absolute;white-space:nowrap;font:400 54px/84px var(--anton);letter-spacing:2px;animation:marq 22s linear infinite}
+.marq.b{background:var(--navm);color:var(--cream);transform:rotate(3deg)}
+.marq.b div{animation-direction:reverse}
+@keyframes marq{to{transform:translateX(-50%)}}
+
+#stripeR{animation:slide 16s linear infinite}
+@keyframes slide{to{transform:translateX(140px)}}
+/* scènes */
+[data-scene=pause] #pause{display:block}
+[data-scene=pause] :is(#head,#band){display:none}
+.hide{display:none!important}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="stage">
+  <svg id="bg" width="1080" height="1920" viewBox="0 0 1080 1920">
+    <defs>
+      <pattern id="stripes" width="140" height="1920" patternUnits="userSpaceOnUse"><rect width="70" height="1920" fill="#fff" fill-opacity=".018"/></pattern>
+      <radialGradient id="glow" cx=".5" cy=".18" r=".7"><stop offset="0" stop-color="#22448e" stop-opacity=".55"/><stop offset="1" stop-color="#22448e" stop-opacity="0"/></radialGradient>
+      <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .05 0"/></filter>
+      <clipPath id="holes"><path id="holePath" clip-rule="evenodd" d="M0 0H1080V1920H0Z"/></clipPath>
+    </defs>
+    <g clip-path="url(#holes)">
+      <rect width="1080" height="1920" fill="#0b1838"/>
+      <rect width="1080" height="1920" fill="url(#glow)"/>
+      <g transform="skewX(-12)"><rect id="stripeR" x="-140" width="1500" height="1920" fill="url(#stripes)"/></g>
+      <!-- traces de terrain : rond central et surface, en filigrane -->
+      <g fill="none" stroke="#f6eedb" stroke-opacity=".05" stroke-width="4">
+        <circle cx="540" cy="1920" r="300"/><path d="M0 1620H1080"/><circle cx="540" cy="0" r="170"/>
+      </g>
+      <rect width="1080" height="1920" filter="url(#grain)"/>
+    </g>
+  </svg>
+
+  <div id="head" class="abs">
+    <img class="logo" alt="La Panenka" src="logo-lapanenka.png">
+    <span class="tag" id="tag"><span class="tri"></span><span id="tagTxt">Réaction</span></span>
+    <div id="title"></div>
+  </div>
+
+  <div id="infoBox" class="abs hide"><div id="infoTitle"></div><div id="infoSrc"></div></div>
+
+  <div id="scr" class="frame hide"><div class="rim"></div><i></i><i></i><i></i><i></i>
+    <div class="label"><span class="chip y" id="scrLbl">Écran</span></div>
+    <div class="tc"><span class="chip"><span class="dot"></span><span id="tc">00:00</span></span></div>
+  </div>
+  <div id="cam" class="frame cam hide"><div class="rim"></div><i></i><i></i><i></i><i></i>
+    <div class="label"><span class="chip">Erwane · La Panenka</span></div>
+  </div>
+
+  <div id="debBox" class="abs hide"><div class="k">Le débat</div><div id="debQ"></div><div class="cta">Ton avis dans le chat. Je lis tout.</div></div>
+
+  <div id="band" class="abs"><div class="wm"><b>LIVE</b></div><div class="msgs" id="msgs"></div></div>
+
+  <div id="pause" class="abs">
+    <div class="marq" style="top:300px"><div></div></div>
+    <div class="center">
+      <img class="logo" alt="La Panenka" src="logo-lapanenka.png">
+      <h1>On<br><span>revient</span></h1>
+      <p>Reste là, le live reprend tout de suite</p>
+      <div class="count hide" id="count">05:00</div>
+    </div>
+    <div class="marq b" style="top:1420px"><div></div></div>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id), qs=new URLSearchParams(location.search);
+const get=(k,d)=>{const v=qs.get(k); return v&&v.trim()?v.trim():d;};
+const SCENE=(get("scene","resume")).toLowerCase();
+document.documentElement.dataset.scene=SCENE;
+
+/* mise à l'échelle 1080x1920 dans la fenêtre */
+function fit(){const s=Math.min(innerWidth/1080,innerHeight/1920);const st=$("stage");st.style.transform="scale("+s+")";st.style.left=((innerWidth-1080*s)/2)+"px";st.style.top=((innerHeight-1920*s)/2)+"px";}
+addEventListener("resize",fit); fit();
+
+/* zones transparentes (écran, caméra) : trous dans le fond + cadres */
+const holes=[];
+function place(id,x,y,w,h,inside){const el=$(id);el.classList.remove("hide");Object.assign(el.style,{left:x+"px",top:y+"px",width:w+"px",height:h+"px"});if(!inside) holes.push([x,y,w,h]);}
+function box(id,y){const el=$(id);el.classList.remove("hide");el.style.top=y+"px";}
+function rr(x,y,w,h,r){return `M${x+r} ${y}H${x+w-r}A${r} ${r} 0 0 1 ${x+w} ${y+r}V${y+h-r}A${r} ${r} 0 0 1 ${x+w-r} ${y+h}H${x+r}A${r} ${r} 0 0 1 ${x} ${y+h-r}V${y+r}A${r} ${r} 0 0 1 ${x+r} ${y}Z`;}
+
+const titre=get("titre",""), tag=get("tag","");
+const SC={
+  resume:{tag:"Résumé",title:titre||"Le résumé du match",scr:"Résumé"},
+  info:{tag:"Info",title:"",scr:"La source"},
+  debat:{tag:"Débat",title:titre||"On en parle",scr:"Écran"},
+  pause:{}
+}[SCENE]||{tag:"Réaction",title:titre||"",scr:"Écran"};
+
+if(SCENE==="pause"){
+  const t=" LA PANENKA ✦ ON REVIENT ✦ ABONNE-TOI @LAPANENKA.FR ✦".replace(/✦/g,"·");
+  document.querySelectorAll(".marq div").forEach(d=>d.textContent=t.repeat(6));
+  const m=parseFloat(get("min",""));
+  if(m>0){ let end=Date.now()+m*60000; const c=$("count"); c.classList.remove("hide");
+    setInterval(()=>{const r=Math.max(0,Math.round((end-Date.now())/1000)); c.textContent=String(Math.floor(r/60)).padStart(2,"0")+":"+String(r%60).padStart(2,"0");},500); }
+}else{
+  $("tagTxt").textContent=tag||SC.tag; $("title").textContent=SC.title; $("scrLbl").textContent=get("ecran",SC.scr);
+  if(SCENE==="info"){
+    $("tag").classList.add("red"); $("tag").querySelector(".tri").outerHTML='<span class="dot"></span>';
+    $("title").textContent=""; $("infoTitle").textContent=titre||"L'info du jour";
+    const src=get("source",""); $("infoSrc").innerHTML=src?"Source : <b></b>":""; if(src) $("infoSrc").querySelector("b").textContent=src;
+    box("infoBox",262);
+    place("scr",40,500,1000,500);       // capture d'écran : tweet, article, vidéo
+    place("cam",40,1040,1000,450);      // caméra
+  }else if(SCENE==="debat"){
+    place("cam",40,282,1000,860);       // caméra en grand
+    if(get("pip","")){ place("scr",600,316,410,231,true); $("scr").querySelector(".tc").classList.add("hide"); }
+    $("debQ").textContent=get("question","Qui avait raison ?");
+    box("debBox",1174);
+  }else{
+    place("scr",40,282,1000,562);       // 16:9 pour un résumé de match
+    place("cam",40,884,1000,606);       // caméra
+  }
+  $("holePath").setAttribute("d","M0 0H1080V1920H0Z"+holes.map(h=>rr(h[0],h[1],h[2],h[3],16)).join(""));
+  $("band").style.top="1516px";
+}
+
+/* compteur de la réaction (depuis l'ouverture du lien) */
+const t0=Date.now();
+setInterval(()=>{const s=Math.floor((Date.now()-t0)/1000);$("tc").textContent=(s>=3600?Math.floor(s/3600)+":":"")+String(Math.floor(s/60)%60).padStart(2,"0")+":"+String(s%60).padStart(2,"0");},1000);
+
+/* messages du bandeau */
+const MSGS=[
+  'Abonne-toi : <em>@lapanenka.fr</em>',
+  'Ton avis dans le <em>chat</em>, je le lis en direct',
+  'Live sur <em>tous les matchs du Real</em>',
+  'Partage le live à un pote <em>qui a tort</em>'
+];
+const box2=$("msgs"); MSGS.forEach((h,i)=>{const d=document.createElement("div");d.className="m"+(i?"":" on");d.innerHTML=h;box2.appendChild(d);});
+let mi=0; setInterval(()=>{const ms=box2.children;ms[mi].className="m off";mi=(mi+1)%ms.length;ms[mi].className="m";void ms[mi].offsetWidth;ms[mi].className="m on";setTimeout(()=>{[...ms].forEach((m,i)=>{if(i!==mi)m.className="m";});},700);},6000);
+
+</script>
+</body>
+</html>
